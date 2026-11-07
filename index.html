@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>For Sale</title>
+<style>
+  :root{
+    --bg:#f6f4ee; --card:#ffffff; --ink:#1f2421; --muted:#6b716c;
+    --accent:#2f6b4f; --accent-ink:#ffffff; --line:#e3e0d7; --sold:#b0413e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15181a; --card:#1f2426; --ink:#eef0ea; --muted:#9aa39c;
+      --accent:#6fbf8f; --accent-ink:#0f1512; --line:#2c3336; --sold:#e06b67;
+    }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  header{padding:40px 16px 16px;max-width:1100px;margin:0 auto}
+  h1{margin:0 0 4px;font-size:2rem;letter-spacing:-.01em}
+  .tag{color:var(--muted);margin:0}
+  .meta{color:var(--muted);font-size:.9rem;margin-top:8px}
+  .toolbar{max-width:1100px;margin:0 auto;padding:0 16px 8px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .toolbar label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.95rem}
+  .toolbar select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+  main{max-width:1100px;margin:0 auto;padding:8px 16px 48px;display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;position:relative}
+  .card.sold{opacity:.6}
+  .img{aspect-ratio:4/3;background:linear-gradient(135deg,var(--line),transparent);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.9rem}
+  .img img{width:100%;height:100%;object-fit:cover;display:block}
+  .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .name{font-weight:600;font-size:1.05rem;margin:0}
+  .price{font-weight:700;white-space:nowrap}
+  .cond{font-size:.85rem;color:var(--muted)}
+  .desc{margin:0;color:var(--ink);font-size:.95rem}
+  .btn{margin-top:auto;display:inline-block;text-align:center;padding:10px 12px;border-radius:10px;background:var(--accent);color:var(--accent-ink);text-decoration:none;font-weight:600}
+  .btn[aria-disabled="true"]{background:var(--line);color:var(--muted);pointer-events:none}
+  .badge{position:absolute;top:10px;left:10px;background:var(--sold);color:#fff;font-size:.75rem;font-weight:700;padding:3px 8px;border-radius:999px;letter-spacing:.04em}
+  .empty{grid-column:1/-1;color:var(--muted);text-align:center;padding:40px 0}
+  footer{max-width:1100px;margin:0 auto;padding:0 16px 40px;color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">For Sale</h1>
+  <p class="tag" id="tagline"></p>
+  <p class="meta" id="meta"></p>
+</header>
+<div class="toolbar">
+  <label>Sort
+    <select id="sort">
+      <option value="default">Listed order</option>
+      <option value="price-asc">Price: low to high</option>
+      <option value="price-desc">Price: high to low</option>
+      <option value="name">Name</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="hideSold" checked> Hide sold</label>
+</div>
+<main id="grid"></main>
+<footer id="footer"></footer>
+<script src="products.js"></script>
+<script>
+(function(){
+  var S = window.SHOP || {items:[]};
+  var fmt = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+  document.title = S.title || "For Sale";
+  document.getElementById("title").textContent = S.title || "For Sale";
+  document.getElementById("tagline").textContent = S.tagline || "";
+
+  var c = S.contact || {};
+  var metaBits = [];
+  if (c.location) metaBits.push("Pickup in " + c.location);
+  document.getElementById("meta").textContent = metaBits.join(" · ");
+
+  function contactHref(item){
+    var msg = "Hi! Is the \"" + item.name + "\" still available?";
+    if (c.sms) return "sms:" + c.sms + "?&body=" + encodeURIComponent(msg);
+    if (c.email) return "mailto:" + c.email + "?subject=" + encodeURIComponent("Interested: " + item.name) + "&body=" + encodeURIComponent(msg);
+    return "";
+  }
+
+  function render(){
+    var sort = document.getElementById("sort").value;
+    var hideSold = document.getElementById("hideSold").checked;
+    var items = (S.items || []).map(function(it,i){ it._i=i; return it; });
+    if (hideSold) items = items.filter(function(it){ return !it.sold; });
+    if (sort==="price-asc") items.sort(function(a,b){ return a.price-b.price; });
+    else if (sort==="price-desc") items.sort(function(a,b){ return b.price-a.price; });
+    else if (sort==="name") items.sort(function(a,b){ return a.name.localeCompare(b.name); });
+    else items.sort(function(a,b){ return a._i-b._i; });
+
+    var grid = document.getElementById("grid");
+    grid.innerHTML = "";
+    if (!items.length){
+      var e = document.createElement("p"); e.className="empty"; e.textContent="Nothing listed right now."; grid.appendChild(e); return;
+    }
+    items.forEach(function(it){
+      var card = document.createElement("article");
+      card.className = "card" + (it.sold ? " sold" : "");
+      var img = document.createElement("div"); img.className="img";
+      if (it.image){ var im=document.createElement("img"); im.src=it.image; im.alt=it.name; im.loading="lazy"; img.appendChild(im); }
+      else { img.textContent = "No photo yet"; }
+      card.appendChild(img);
+      if (it.sold){ var b=document.createElement("span"); b.className="badge"; b.textContent="SOLD"; card.appendChild(b); }
+
+      var body = document.createElement("div"); body.className="body";
+      var row = document.createElement("div"); row.className="row";
+      var name = document.createElement("h2"); name.className="name"; name.textContent=it.name;
+      var price = document.createElement("span"); price.className="price"; price.textContent = (it.price===0||it.price==null) ? "Free" : fmt.format(it.price);
+      row.appendChild(name); row.appendChild(price); body.appendChild(row);
+      if (it.condition){ var cd=document.createElement("div"); cd.className="cond"; cd.textContent="Condition: "+it.condition; body.appendChild(cd); }
+      if (it.description){ var d=document.createElement("p"); d.className="desc"; d.textContent=it.description; body.appendChild(d); }
+
+      var a = document.createElement("a"); a.className="btn";
+      var href = contactHref(it);
+      if (it.sold){ a.textContent="Sold"; a.setAttribute("aria-disabled","true"); }
+      else if (href){ a.href=href; a.textContent="I'm interested"; }
+      else { a.textContent="Add contact info in products.js"; a.setAttribute("aria-disabled","true"); }
+      body.appendChild(a);
+      card.appendChild(body);
+      grid.appendChild(card);
+    });
+  }
+  document.getElementById("sort").addEventListener("change",render);
+  document.getElementById("hideSold").addEventListener("change",render);
+  render();
+  document.getElementById("footer").textContent = "Cash or Venmo at pickup. First come, first served.";
+})();
+</script>
+</body>
+</html>

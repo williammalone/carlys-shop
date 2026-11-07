@@ -1,14 +1,14 @@
 # Handoff: "Carly's stuff" for-sale website
 
 **Status:** Storefront is built and pushed. It is waiting on the real item list. Everything in `shop/products.js` is a placeholder.
-**Branch:** `claude/gracious-darwin-6mrazt` in `williammalone/xeriscaping`
+**Branch:** `claude/confident-thompson-navxwa` in `williammalone/xeriscaping` (supersedes `claude/gracious-darwin-6mrazt`, which is merged in)
 **Last updated:** November 7, 2026
 
 ## What this is
 
 William wants a simple website to sell items that Carly sent him by text message. Carly sent 23 photos via iCloud link (expires Dec 6). William saved all 23 to the Photos app on his Mac. From the one screenshot seen so far, the items look like handmade crochet blankets (chevron pattern, green/blue/grey). No prices or descriptions have been seen yet.
 
-The previous session ran in a cloud container and could not reach the Mac, so the photos never arrived. That is the only blocker.
+Two sessions so far (Nov 7) ran in cloud containers and could not reach the Mac, so the photos never arrived. The second session also checked Gmail for the iCloud link or a message from Carly and found nothing. Photos are the only blocker.
 
 ## What already exists
 
@@ -19,14 +19,18 @@ The previous session ran in a cloud container and could not reach the Mac, so th
 
 ## Next session: do this
 
-Run from the Mac (Claude desktop app, or `claude remote-control` in the repo folder) so the photos are reachable.
+Get the photos into the repo first. Any one of these works:
 
-1. **Get the photos.** In Photos, select the 23 items Carly sent, File > Export > Export Unmodified Originals (or JPEG, size Large). Save to `shop/images/` in this repo. Rename to something readable, e.g. `blanket-chevron-green.jpg`. Convert HEIC to JPEG if Photos didn't.
+- **Run from the Mac.** Open the repo in the Claude desktop app, or run `claude remote-control` in the repo folder, so the session can read the exported files directly.
+- **Attach them to the chat.** In a cloud session, drop the exported JPEGs into a message. They land in the container and can be moved into `shop/images/`.
+- **Upload on GitHub.** On github.com, switch to the branch above, open `shop/`, use Add file > Upload files, and put them in `shop/images/`. Then start a session and say the photos are there.
+
+1. **Export the photos.** In Photos, select the 23 items Carly sent, File > Export > Export Unmodified Originals (or JPEG, size Large). Rename to something readable, e.g. `blanket-chevron-green.jpg`. Convert HEIC to JPEG if Photos didn't (Export as JPEG does this).
 2. **Read Carly's texts** for any prices, names, sizes, materials, or which items are already spoken for. If William can paste the thread, use that. If not, write descriptions from the photos and leave `price` as a number William confirms.
 3. **Fill `shop/products.js`.** One entry per item. Set `image` to the relative path (`images/filename.jpg`). Set `title` and `tagline` to suit (e.g. "Carly's Handmade Blankets"). Set `contact.sms` to William's number, or `contact.email` if he prefers email, and `contact.location` (currently "Erie, CO").
 4. **Resize images** so the page stays fast: roughly 1200px on the long side, JPEG quality ~80. `sips -Z 1200 file.jpg` works on macOS.
 5. **Check it.** Open `shop/index.html` in a browser. Confirm every card has a photo, price, and working "I'm interested" link. Check phone width.
-6. **Commit and push** to `claude/gracious-darwin-6mrazt`.
+6. **Commit and push** to `claude/confident-thompson-navxwa`.
 7. **Host it** if William wants a public link. Easiest: enable GitHub Pages on the repo for this branch with `/shop` as the folder, or drag the `shop/` folder onto Netlify Drop.
 
 ## Open questions for William

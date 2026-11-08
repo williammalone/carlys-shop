@@ -16,6 +16,7 @@ A simple static website to sell handmade items Carly sent William by text. Carly
 - **Live preview:** https://claude.ai/artifact/XZAMg6wNMpucLADSY3mBd2 (private to William until shared from the page's Share menu). Republish from the repo's `shop/` after edits, or host on GitHub Pages for a public URL.
 - `shop/products.js` — the only file to edit. Sets `title`, `tagline`, `contact`, and the `items` array. Fully populated. **All 26 prices are `null`** and `contact.sms` / `contact.email` are empty, so every card currently shows "Ask" and a disabled "Add contact info in products.js" button.
 - `shop/images/` — 45 photos, 8.7 MB total. 38 are used by items. The other 7 are prefixed `extra-` and are not products: five balloon-arch photos from an "almost married" party, a man in a Flash mask, and a floral ice bucket. Delete them or leave them.
+- `shop/images/thumbs/` — 600px versions of the product photos, served to cards via `srcset`; the full 1200px files are used in the detail sheet. Regenerate with Pillow (`im.thumbnail((600,600))`) when photos change.
 - `shop/images/logo.svg` — the logo: a pink ball of yarn with cat ears and a heart on the loose strand. Inlined in the masthead and footer of `index.html` and used as the favicon. Edit the SVG file and re-paste if the mark changes.
 - `shop/README.md` — field reference for `products.js`.
 - `shop/tools/resize-images.py` — resizes JPEG/PNG/HEIC to 1200px, strips EXIF/GPS. `--stub` prints item stubs.

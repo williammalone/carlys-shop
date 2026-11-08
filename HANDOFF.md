@@ -43,6 +43,14 @@ The site has no server, so payment works one of three ways. All three are alread
 2. **Venmo / Cash App / PayPal links.** Fill `payments.venmo`, `payments.cashapp`, or `payments.paypal` with the handle and "Pay $X with Venmo" buttons appear in every detail view, prefilled with price and item name. Zero fees. Buyers are told to claim first so nothing sells twice.
 3. **Stripe Payment Links (cards, Apple Pay).** William declined to share a Stripe API key on Nov 8, so links were not created automatically. To do it by hand: Stripe Dashboard > Payment Links > New link > add the item as a product with its price > under Advanced, turn on "Limit the number of payments" and set it to 1 > create, copy the URL into that item's `buy` field. The card then shows "Buy now" and step 1 of How buying works rewrites itself. Mark the item `sold: true` after it sells.
 
+## Quality checks (Nov 8)
+
+- axe-core WCAG 2.1 AA: zero violations in light and dark, on the page and inside the detail sheet.
+- Lighthouse, mobile, throttled: Accessibility 100, Best Practices 100, SEO 100, Performance 92–94 (was 85). First paint 1.1s, largest paint 2.4–2.8s, layout shift 0.08.
+- What made the difference: fonts load without blocking and have metric-matched fallbacks so text doesn't jump; photos ship as WebP at 360/600/1200px with JPEG fallback (`images/small/`, `images/thumbs/`, `images/`); space is reserved for the stat pills, chips and results line so nothing moves when the script fills them.
+- Saved view offers "Claim all N", which composes one email listing every saved piece with a total.
+- Re-run: `node tools/check.js` for the smoke test and axe; Lighthouse via `npx lighthouse <url> --form-factor=mobile`.
+
 ## Open questions for William
 
 - Prices for each item (none were in Carly's messages).

@@ -20,20 +20,24 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"></noscript>
 <style>
   /* Layout: a crochet scallop edge, a soft rounded masthead with sticker stats, pastel
      category chips, then a grid of photo cards with a stitched border and a sticker price
      tag. Tapping a card opens a detail sheet. Palette: pastel versions of Carly's yarn:
      blush, butter, mint, lavender, sky, on a pink-tinted paper. */
+  /* metric-matched fallbacks so text doesn't jump when the web fonts arrive */
+  @font-face{font-family:"Fredoka Fallback";src:local("Arial"),local("Liberation Sans"),local("Helvetica Neue"),local("Helvetica");size-adjust:104.41%;ascent-override:93.28%;descent-override:22.6%;line-gap-override:0%}
+  @font-face{font-family:"Nunito Fallback";src:local("Arial"),local("Liberation Sans"),local("Helvetica Neue"),local("Helvetica");size-adjust:105.21%;ascent-override:96.1%;descent-override:33.55%;line-gap-override:0%}
   :root{
     --bg:#fdf3f7; --card:#fffdfc; --ink:#4a3a55; --muted:#6a5b74; --line:#f1dbe6; --well:#f8e9f0;
     --pink:#f7b1c9; --butter:#ffe28f; --mint:#bdebd8; --lavender:#dccdf7; --sky:#c3e5f8;
     --on-pastel:#4a3a55; --accent:#f39ab9; --accent-ink:#4a3a55; --accent-shadow:#e07ca1;
     --sold:#d96b7a; --heart:#e8608a; --heart-ink:#b8365f;
     --shadow:0 8px 24px rgba(120,80,110,.12);
-    --display:"Fredoka",ui-rounded,"Nunito",system-ui,-apple-system,sans-serif;
-    --body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --display:"Fredoka","Fredoka Fallback",ui-rounded,system-ui,-apple-system,sans-serif;
+    --body:"Nunito","Nunito Fallback",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -93,7 +97,10 @@
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) h1 em::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10' preserveAspectRatio='none'><path d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5' fill='none' stroke='%23f6d87e' stroke-width='3' stroke-linecap='round'/></svg>")}}
   :root[data-theme="dark"] h1 em::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10' preserveAspectRatio='none'><path d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5' fill='none' stroke='%23f6d87e' stroke-width='3' stroke-linecap='round'/></svg>")}
   .tag{font-size:1.1rem;color:var(--muted);margin:16px 0 0;max-width:46ch;text-wrap:pretty}
-  .stats{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;max-width:70ch}
+  .stats{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;max-width:70ch;min-height:88px}
+  .stats b{display:inline-block;min-width:1.4ch;text-align:center}
+  @media (max-width:700px){.stats{min-height:134px}}
+  @media (min-width:960px){.stats{min-height:44px}}
   .stats li{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;font:700 .85rem/1.2 var(--body);color:var(--on-pastel);background:var(--lavender)}
   .stats li:nth-child(5n+2){background:var(--pink)} .stats li:nth-child(5n+3){background:var(--mint)} .stats li:nth-child(5n+4){background:var(--butter)} .stats li:nth-child(5n+5){background:var(--sky)}
   .stats b{font:600 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
@@ -119,7 +126,7 @@
   @keyframes chipIn{from{transform:translateY(-6px);opacity:.6}to{transform:none;opacity:1}}
   body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
   .bar .wrap{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0;min-height:44px}
   .chip{white-space:nowrap;min-height:44px;border:2px solid transparent;background:var(--card);border-radius:999px;padding:10px 16px;font:700 .92rem/1 var(--body);cursor:pointer;color:var(--ink);box-shadow:0 2px 0 var(--line);transition:transform .15s,box-shadow .15s,background .15s}
   .chip:hover{transform:translateY(-1px)}
   .chip:active{transform:translateY(1px);box-shadow:0 0 0 var(--line)}
@@ -141,7 +148,11 @@
   input[type=checkbox]{width:20px;height:20px;accent-color:var(--heart);margin:0}
 
   main{padding-block:22px 56px}
-  .results{color:var(--muted);font:700 .82rem/1.3 var(--body);margin:0 0 14px}
+  .savedbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;background:var(--pink);color:var(--on-pastel);border-radius:18px;padding:12px 16px;margin:0 0 16px;font:700 .95rem var(--body);animation:rise .4s cubic-bezier(.2,.8,.2,1)}
+  .savedbar .btn{flex:0 0 auto}
+  .shinfo .desc{white-space:pre-line}
+  .results{color:var(--muted);font:700 .82rem/1.3 var(--body);margin:0 0 14px;min-height:1.3em}
+  .grid:empty{min-height:120vh}
   .grid{display:grid;gap:clamp(14px,2vw,24px);grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
   .card{background:var(--card);border:2px dashed var(--line);border-radius:26px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:var(--shadow);transition:transform .25s ease,box-shadow .25s ease}
   @media (hover:hover){.card:hover:not(.tilt){transform:translateY(-4px) rotate(-.6deg)}.card:hover .ph img{transform:scale(1.03)}}
@@ -503,10 +514,11 @@
 
 <main class="wrap">
   <p class="results" id="results" aria-live="polite"></p>
+  <div class="savedbar" id="savedBar" hidden></div>
   <div class="grid" id="grid"></div>
 </main>
 
-<section class="about wrap" id="about" aria-labelledby="aboutTitle" hidden>
+<section class="about wrap" id="about" aria-labelledby="aboutTitle">
   <div class="about-card">
     <div class="about-pic"><img id="aboutImg" alt="Carly"></div>
     <div class="about-text">
@@ -679,20 +691,25 @@
     card.classList.add("tilt"); card.style.transform = "perspective(900px) rotateX(" + (-py * 6) + "deg) rotateY(" + (px * 6) + "deg) translateY(-4px)";
   });
   document.addEventListener("pointerout", function(e){ var card = e.target.closest(".card"); if (card && !card.contains(e.relatedTarget)){ card.style.transform = ""; card.classList.remove("tilt"); } });
-  function thumb(src){ return /^images\/[^/]+\.jpe?g$/i.test(src) ? src.replace(/^images\//, "images/thumbs/") : ""; }
-  function setSrc(img, src){ var t = thumb(src); img.src = t || src; img.srcset = t ? t + " 600w, " + src + " 1200w" : ""; }
+  var WEBP = (function(){ try { return document.createElement("canvas").toDataURL("image/webp").indexOf("data:image/webp") === 0; } catch (e) { return false; } })();
+  function isLocal(src){ return /^images\/[^/]+\.jpe?g$/i.test(src); }
+  function ext(src){ return WEBP ? src.replace(/\.jpe?g$/i, ".webp") : src; }
+  function variant(src, dir){ return isLocal(src) ? ext(src.replace(/^images\//, "images/" + dir + "/")) : src; }
+  function thumb(src){ return isLocal(src) ? variant(src, "thumbs") : ""; }
+  function full(src){ return isLocal(src) ? ext(src) : src; }
+  function setSrc(img, src){ if (!isLocal(src)){ img.src = src; img.removeAttribute("srcset"); return; } img.src = variant(src, "thumbs"); img.srcset = variant(src, "small") + " 360w, " + variant(src, "thumbs") + " 600w, " + full(src) + " 1200w"; }
   function priceText(p){ return p==null ? "Ask us" : (p===0 ? "Free" : fmt.format(p)); }
   var PAY = S.payments || {};
   var ACCEPTED = (PAY.accepted && PAY.accepted.length) ? PAY.accepted : ["Cash", "Venmo"];
   function claimText(it){
     var name = $("cName").value.trim(), when = $("cWhen").value, pay = ($("cPay").querySelector("input:checked") || {}).value || "", note = $("cNote").value.trim();
-    var lines = ["Hi! I'd like to claim the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + ".", ""];
+    var lines = it._bundle ? ["Hi! I'd like to claim these pieces" + (it.price > 0 ? " (" + priceText(it.price) + " together)" : "") + ":", it.description, ""] : ["Hi! I'd like to claim the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + ".", ""];
     if (name) lines.push("Name: " + name);
     lines.push("Pickup: " + when + (c.location ? " in " + c.location : ""));
     if (pay) lines.push("Paying with: " + pay);
     if (note) lines.push("", note);
     lines.push("", itemUrl(it));
-    return { subject: "Claim: " + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
+    return { subject: (it._bundle ? "Claim: " : "Claim: ") + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
   }
   function claimHref(it){ var t = claimText(it); if (c.sms) return "sms:" + c.sms + "?&body=" + encodeURIComponent(t.body); return "mailto:" + c.email + "?subject=" + encodeURIComponent(t.subject) + "&body=" + encodeURIComponent(t.body); }
   function showClaim(it){
@@ -726,6 +743,7 @@
     else list.sort(function(a,b){ return a._i-b._i; });
 
     lastList = list.slice();
+    var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
     $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
     if (!list.length){ grid.innerHTML = '<p class="empty">' + (q ? "No pieces match \"" + esc(q) + "\". Try another word." : cat === "__saved" ? "Nothing saved yet. Tap the heart on a piece to keep it here." : "Nothing here right now.") + '</p>'; return; }
@@ -733,10 +751,10 @@
       var card = document.createElement("article");
       card.className = "card" + (it.sold ? " sold" : "");
       card.style.setProperty("--i", Math.min(grid.children.length, 11));
-      var ph = document.createElement("button"); ph.className = "ph" + (it._fit==="contain" ? " contain" : ""); ph.type="button"; ph.setAttribute("aria-label","Open details for " + it.name);
+      var ph = document.createElement("button"); ph.className = "ph" + (it._fit==="contain" ? " contain" : ""); ph.type="button"; ph.setAttribute("aria-label","Open details for " + it.name + ", " + priceText(it.price));
       var frame = document.createElement("span"); frame.className = "frame"; ph.appendChild(frame);
       var im = null, shown = 0;
-      if (it._pics.length){ im = document.createElement("img"); fadeIn(im); setSrc(im, it._pics[0]); im.alt = it.name; im.loading = grid.children.length < 4 ? "eager" : "lazy"; if (grid.children.length === 0) im.setAttribute("fetchpriority", "high"); im.decoding = "async"; im.sizes = "(max-width:560px) 50vw, (max-width:1100px) 33vw, 280px"; frame.appendChild(im); ph.addEventListener("click", function(){ openSheet(it, shown); }); }
+      if (it._pics.length){ im = document.createElement("img"); fadeIn(im); setSrc(im, it._pics[0]); im.alt = it.name; im.loading = grid.children.length < (window.innerWidth < 560 ? 2 : 4) ? "eager" : "lazy"; if (grid.children.length === 0) im.setAttribute("fetchpriority", "high"); im.decoding = "async"; im.sizes = "(max-width:560px) 50vw, (max-width:1100px) 33vw, 280px"; frame.appendChild(im); ph.addEventListener("click", function(){ openSheet(it, shown); }); }
       else { frame.innerHTML = '<span class="noimg">Photo coming</span>'; ph.disabled = true; }
       var pt = document.createElement("span"); pt.className = "pt" + (it.price==null ? " ask" : ""); pt.textContent = priceText(it.price); pt.style.setProperty("--i", grid.children.length); ph.appendChild(pt);
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
@@ -795,14 +813,14 @@
     var meta = "";
     if (it.condition) meta += "<dt>Condition</dt><dd>" + esc(it.condition) + "</dd>";
     if (c.location) meta += "<dt>Pickup</dt><dd>" + esc(c.location) + "</dd>";
-    if (it._pics.length > 1) meta += "<dt>Photos</dt><dd>" + it._pics.length + "</dd>";
+    if (it._pics.length > 1) meta += "<dt>" + (it._bundle ? "Pieces" : "Photos") + "</dt><dd>" + it._pics.length + "</dd>";
     $("shmeta").innerHTML = meta;
     var href = contactHref(it), cta = "";
-    var saved = favs.has(it._slug);
+    var saved = !it._bundle && favs.has(it._slug);
     var buy = buyHref(it), pays = it.sold ? [] : payLinks(it);
     var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shclaim">Claim this piece</button>' : "") +
       (buy && href ? '<a class="btn ghost" href="' + esc(href) + '">Ask</a>' : "") +
-      '<button type="button" class="btn ghost" id="shfav" aria-pressed="' + saved + '">' + (saved ? "♥ Saved" : "♡ Save") + '</button>' +
+      (it._bundle ? "" : '<button type="button" class="btn ghost" id="shfav" aria-pressed="' + saved + '">' + (saved ? "♥ Saved" : "♡ Save") + '</button>') +
       '<button type="button" class="btn ghost" id="shshare">Share</button></div>';
     var payHtml = "";
     if (pays.length){
@@ -817,15 +835,15 @@
     var sbc = $("shbarclaim"); if (sbc) sbc.addEventListener("click", function(){ showClaim(it); });
     var sc = $("shclaim"); if (sc) sc.addEventListener("click", function(){ showClaim(it); });
     var cf = $("claim"); if (cf.dataset.slug !== it._slug){ cf.hidden = true; $("cName").value = ""; $("cNote").value = ""; }
-    $("shfav").addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
+    var sf = $("shfav"); if (sf) sf.addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
     $("shshare").addEventListener("click", function(){ shareItem(it); });
-    var rel = items.filter(function(x){ return x !== it && !x.sold && (x.category||"") === (it.category||"") }).slice(0, 4);
-    if (rel.length < 2) rel = rel.concat(items.filter(function(x){ return x !== it && !x.sold && rel.indexOf(x) < 0; }).slice(0, 4 - rel.length));
+    var rel = it._bundle ? [] : items.filter(function(x){ return x !== it && !x.sold && (x.category||"") === (it.category||"") }).slice(0, 4);
+    if (!it._bundle && rel.length < 2) rel = rel.concat(items.filter(function(x){ return x !== it && !x.sold && rel.indexOf(x) < 0; }).slice(0, 4 - rel.length));
     $("shrelated").hidden = !rel.length;
     var row = $("shrelrow"); row.innerHTML = "";
     rel.forEach(function(x){ var b = document.createElement("button"); b.type = "button"; b.innerHTML = '<img src="' + esc(thumb(x._pics[0]) || x._pics[0] || "") + '" alt=""><span>' + esc(x.name) + '</span>'; b.addEventListener("click", function(){ openSheet(x, 0); $("shname").focus({preventScroll:true}); }); row.appendChild(b); });
     var pool = lastList.length ? lastList : items, pos = pool.indexOf(it);
-    $("shPrevItem").hidden = $("shNextItem").hidden = pool.length < 2;
+    $("shPrevItem").hidden = $("shNextItem").hidden = it._bundle || pool.length < 2;
     $("shPrevItem").onclick = function(){ openSheet(pool[(pos - 1 + pool.length) % pool.length], 0); };
     $("shNextItem").onclick = function(){ openSheet(pool[(pos + 1) % pool.length], 0); };
     var th = $("shthumbs"); th.innerHTML = ""; th.hidden = it._pics.length < 2;
@@ -843,14 +861,14 @@
   }
   function swapImg(img, src){
     var card = img.closest(".ph"); // card images keep their srcset; sheet image is full size only
-    var apply = function(){ if (card) setSrc(img, src); else { img.removeAttribute("srcset"); img.src = src; } };
-    if ((card ? (thumb(src) || src) : src) === img.getAttribute("src")) return;
+    var apply = function(){ if (card) setSrc(img, src); else { img.removeAttribute("srcset"); img.src = full(src); } };
+    if ((card ? (thumb(src) || src) : full(src)) === img.getAttribute("src")) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches){ apply(); return; }
     img.classList.add("swap");
-    var pre = new Image(); pre.onload = pre.onerror = function(){ apply(); requestAnimationFrame(function(){ img.classList.remove("swap"); }); }; pre.src = card ? (thumb(src) || src) : src;
+    var pre = new Image(); pre.onload = pre.onerror = function(){ apply(); requestAnimationFrame(function(){ img.classList.remove("swap"); }); }; pre.src = card ? (thumb(src) || src) : full(src);
   }
   function showPic(){
-    var img = $("shimg"); if (sheet.open) swapImg(img, cur._pics[idx] || ""); else { img.removeAttribute("srcset"); img.src = cur._pics[idx] || ""; } img.alt = cur.name + (cur._pics.length > 1 ? ", photo " + (idx+1) + " of " + cur._pics.length : "");
+    var img = $("shimg"); if (sheet.open) swapImg(img, cur._pics[idx] || ""); else { img.removeAttribute("srcset"); img.src = full(cur._pics[idx] || ""); } img.alt = cur.name + (cur._pics.length > 1 ? ", photo " + (idx+1) + " of " + cur._pics.length : "");
     Array.prototype.forEach.call($("shthumbs").children, function(b,k){ if (k===idx) b.setAttribute("aria-current","true"); else b.removeAttribute("aria-current"); });
   }
   function step(n){ if(!cur) return; idx = (idx + n + cur._pics.length) % cur._pics.length; showPic(); }
@@ -909,9 +927,10 @@
     var picks = [], seen = {};
     items.forEach(function(it){ var k = it.category || "Other"; if (!it.sold && it._pics.length && !seen[k] && picks.length < 3){ seen[k] = 1; picks.push(it); } });
     var col = $("collage"); col.innerHTML = "";
+    if (!matchMedia("(min-width: 960px)").matches) return;
     picks.forEach(function(it){ var b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", "Open " + it.name); b.innerHTML = '<img src="' + esc(thumb(it._pics[0]) || it._pics[0]) + '" alt="" loading="eager"><span>' + esc(it.name) + '</span>'; b.addEventListener("click", function(){ openSheet(it, 0); }); col.appendChild(b); });
   })();
-  $("shimg").addEventListener("click", function(){ if (!cur) return; $("zoomimg").src = cur._pics[idx] || ""; $("zoomimg").alt = cur.name; $("zoom").hidden = false; });
+  $("shimg").addEventListener("click", function(){ if (!cur) return; $("zoomimg").src = full(cur._pics[idx] || ""); $("zoomimg").alt = cur.name; $("zoom").hidden = false; });
   function closeZoom(){ $("zoom").hidden = true; }
   $("zoom").addEventListener("click", closeZoom); $("zoomx").addEventListener("click", function(e){ e.stopPropagation(); closeZoom(); });
   sheet.addEventListener("close", closeZoom);
@@ -961,11 +980,11 @@
     var done = function(){ toast("Shop link copied. Send it to someone who loves handmade."); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function(){ prompt("Copy this link:", url); }); else prompt("Copy this link:", url);
   });
+  if (!(S.about && (S.about.text || S.about.image))) $("about").hidden = true;
   if (S.about && (S.about.text || S.about.image)){
-    $("about").hidden = false;
     if (S.about.title) $("aboutTitle").textContent = S.about.title;
     $("aboutText").textContent = S.about.text || "";
-    if (S.about.image){ $("aboutImg").src = S.about.image; $("aboutImg").alt = S.about.alt || "Carly"; } else $("aboutImg").parentNode.remove();
+    if (S.about.image){ var ai = $("aboutImg"); setSrc(ai, S.about.image); ai.sizes = "(max-width:700px) 100vw, 300px"; ai.loading = "lazy"; ai.decoding = "async"; ai.alt = S.about.alt || "Carly"; } else $("aboutImg").parentNode.remove();
   }
   $("hideSold").addEventListener("change", function(){ chips(); render(); });
   chips(); render(); openFromHash();

@@ -2,10 +2,10 @@
 # Export Carly's photos from the macOS Photos app as JPEG, resize them to 1200px,
 # and print products.js item stubs. Run this ON THE MAC, from the repo root:
 #
-#   bash shop/tools/export-from-photos.sh                 # exports album "Carly blankets"
-#   bash shop/tools/export-from-photos.sh --album "Name"  # a different album
-#   bash shop/tools/export-from-photos.sh --date 2026-11-06   # by capture date instead
-#   bash shop/tools/export-from-photos.sh --selection  # whatever is selected in Photos right now
+#   bash tools/export-from-photos.sh                 # exports album "Carly blankets"
+#   bash tools/export-from-photos.sh --album "Name"  # a different album
+#   bash tools/export-from-photos.sh --date 2026-11-06   # by capture date instead
+#   bash tools/export-from-photos.sh --selection  # whatever is selected in Photos right now
 #
 # Before running: in Photos, select the 45 photos Carly texted, right-click >
 # Add to > New Album, and name it "Carly blankets" (top level, not inside a folder).
@@ -14,7 +14,7 @@
 # not the day you saved them.
 #
 # The first run asks for permission to control Photos; click OK.
-# Exports go to shop/tools/export/ (git-ignored). Resized JPEGs go to shop/images/.
+# Exports go to tools/export/ (git-ignored). Resized JPEGs go to images/.
 set -euo pipefail
 
 ALBUM="Carly blankets"
@@ -35,8 +35,8 @@ if [ "$(uname)" != "Darwin" ]; then
   exit 1
 fi
 
-cd "$(dirname "$0")/../.."     # repo root
-EXPORT_DIR="$PWD/shop/tools/export"
+cd "$(dirname "$0")/.."        # repo root
+EXPORT_DIR="$PWD/tools/export"
 mkdir -p "$EXPORT_DIR"
 rm -f "$EXPORT_DIR"/*.jpeg "$EXPORT_DIR"/*.jpg "$EXPORT_DIR"/*.JPG "$EXPORT_DIR"/*.JPEG 2>/dev/null || true
 
@@ -109,8 +109,8 @@ echo "Optional: rename the files in $EXPORT_DIR to something readable now (e.g. 
 echo "The names become the image filenames and the default item names. Press Enter when ready, or Ctrl-C to stop."
 read -r _ || true
 
-echo "Resizing to 1200px into shop/images/ ..."
-python3 shop/tools/resize-images.py "$EXPORT_DIR" --out shop/images --stub | tee "$EXPORT_DIR/stubs.txt"
+echo "Resizing to 1200px into images/ ..."
+python3 tools/resize-images.py "$EXPORT_DIR" --out images --stub | tee "$EXPORT_DIR/stubs.txt"
 echo
-echo "Done. Item stubs are above and in $EXPORT_DIR/stubs.txt. Paste them into the items array in shop/products.js,"
-echo "then fill in price and description for each. Open shop/index.html to check."
+echo "Done. Item stubs are above and in $EXPORT_DIR/stubs.txt. Paste them into the items array in products.js,"
+echo "then fill in price and description for each. Open index.html to check."

@@ -2,12 +2,12 @@
 """Resize exported photos for the shop and (optionally) print products.js item stubs.
 
 Usage:
-  python3 shop/tools/resize-images.py <input-dir> [--out shop/images] [--max 1200] [--quality 80] [--stub]
+  python3 tools/resize-images.py <input-dir> [--out images] [--max 1200] [--quality 80] [--stub]
 
 - Reads JPEG/PNG, and HEIC/HEIF when pillow-heif is installed (python3 -m pip install pillow-heif).
 - Auto-rotates from EXIF, strips all metadata (incl. GPS), fits the long side to --max px.
 - Writes <out>/<slugified-name>.jpg. Existing files are overwritten.
-- --stub prints one products.js item per image to paste into shop/products.js.
+- --stub prints one products.js item per image to paste into products.js.
 
 Requires Pillow:  python3 -m pip install pillow   (plus pillow-heif for HEIC)
 """
@@ -34,7 +34,7 @@ def slug(stem: str) -> str:
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("input")
-    p.add_argument("--out", default="shop/images")
+    p.add_argument("--out", default="images")
     p.add_argument("--max", type=int, default=1200)
     p.add_argument("--quality", type=int, default=80)
     p.add_argument("--stub", action="store_true")
@@ -64,7 +64,7 @@ def main() -> int:
         })
 
     if a.stub:
-        print("\n// Paste into the items array in shop/products.js:")
+        print("\n// Paste into the items array in products.js:")
         print(json.dumps(stubs, indent=2)[1:-1].strip())
     return 0
 

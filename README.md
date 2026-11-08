@@ -1,6 +1,10 @@
-# Shop
+# Carly's Handmade Blankets & Art
 
-A single-page, no-build storefront for listing items for sale.
+A single-page, no-build storefront for Carly's handmade blankets, crochet, and paintings. Open `index.html` in a browser, or host the repo root on any static host.
+
+**Hosting on GitHub Pages:** Settings > Pages > Source: Deploy from a branch > `main` / `/ (root)`. The site appears at `https://williammalone.github.io/carlys-shop/`.
+
+Read `HANDOFF.md` for status and next steps.
 
 - `index.html` — the page. Open it directly in a browser, or host it anywhere static (GitHub Pages, Netlify, etc.).
 - `products.js` — the only file you edit. Set `title`, `tagline`, `contact` (phone for SMS or email), and the `items` list.

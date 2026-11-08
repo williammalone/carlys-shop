@@ -30,7 +30,7 @@ window.SHOP = {
   contact: {
     // Buyers tap "I'm interested" to open one of these. Fill in one or both.
     sms: "",        // e.g. "+13035551234"
-    email: "",      // e.g. "you@example.com"
+    email: "william.malone@gmail.com",
     location: "Erie, CO"
   },
   items: [

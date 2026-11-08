@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Carly's Handmade — flyer</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nunito:wght@600;700;800&display=swap">
+<style>
+  @page{size:letter;margin:0.5in}
+  :root{--ink:#4a3a55;--muted:#6a5b74;--pink:#f7b1c9;--heart:#b8365f;--butter:#ffe28f;--mint:#bdebd8;--lavender:#dccdf7;--sky:#c3e5f8;--line:#f1dbe6}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#e9e3ee}
+  body{font-family:Nunito,system-ui,sans-serif;color:var(--ink);display:grid;place-items:start center;padding:24px 12px}
+  .page{width:8.5in;min-height:11in;background:#fdf3f7;padding:.55in .6in;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+  .ribbon{height:12px;background:linear-gradient(90deg,var(--pink) 0 20%,var(--butter) 20% 40%,var(--mint) 40% 60%,var(--lavender) 60% 80%,var(--sky) 80%);border-radius:6px}
+  header{display:flex;align-items:center;gap:22px;margin-top:.35in}
+  header img{width:1.5in;height:auto}
+  h1{font:600 46px/1 Fredoka;margin:0}
+  h1 em{font-style:normal;color:var(--heart);display:block}
+  .tag{font:600 16px/1.45 Nunito;color:var(--muted);margin:10px 0 0;max-width:4.9in}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:.3in}
+  .grid figure{margin:0;background:#fff;border:2px dashed var(--line);border-radius:18px;padding:8px;break-inside:avoid}
+  .grid img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;display:block}
+  .grid figcaption{display:flex;justify-content:space-between;gap:8px;font:700 12px/1.3 Nunito;margin-top:6px}
+  .grid figcaption b{color:var(--heart);white-space:nowrap}
+  .grid figure:nth-child(1){transform:rotate(-1.5deg)} .grid figure:nth-child(2){transform:rotate(1deg)} .grid figure:nth-child(3){transform:rotate(-.6deg)} .grid figure:nth-child(5){transform:rotate(1.2deg)}
+  .cta{display:grid;grid-template-columns:1fr auto;gap:22px;align-items:center;margin-top:.3in;background:#fff;border:2px dashed var(--line);border-radius:22px;padding:18px 22px}
+  .cta h2{font:600 24px/1.1 Fredoka;margin:0 0 6px}
+  .cta p{margin:0;font:600 14px/1.5 Nunito;color:var(--muted)}
+  .cta .url{font:800 15px/1.3 Nunito;color:var(--ink);margin-top:8px;word-break:break-all}
+  .cta img{width:1.6in;height:1.6in;border-radius:12px;border:3px solid var(--line);background:#fff}
+  .pill{display:inline-block;background:var(--mint);border-radius:999px;padding:6px 12px;font:700 13px Nunito;margin-top:10px}
+  footer{position:absolute;left:.6in;right:.6in;bottom:.45in;display:flex;justify-content:space-between;font:700 12px Nunito;color:var(--muted)}
+  .print{position:fixed;right:16px;top:16px;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:12px 18px;font:800 14px Nunito;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  @media print{html,body{background:#fff;padding:0}.page{box-shadow:none;width:auto;min-height:0;padding:0}.print{display:none}}
+</style>
+</head>
+<body>
+<button class="print" onclick="print()">Print</button>
+<div class="page">
+  <div class="ribbon"></div>
+  <header>
+    <img src="images/logo.svg" alt="">
+    <div><h1>Carly's Handmade<em>Blankets &amp; Art</em></h1><p class="tag">Chunky knit blankets, crochet you can wear, beds your cat will steal, and original paintings. One of each, all handmade in Colorado.</p></div>
+  </header>
+  <div class="grid" id="grid"></div>
+  <div class="cta">
+    <div>
+      <h2>See everything and claim a piece</h2>
+      <p>Scan the code or type the address. Every piece has photos, a price, and a button to claim it.</p>
+      <div class="url" id="url">williammalone.github.io/carlys-shop</div>
+      <span class="pill" id="pickup">Local pickup in Erie, CO</span>
+    </div>
+    <img src="images/qr.png" alt="QR code for the shop">
+  </div>
+  <footer><span>Made with ♥ by Carly</span><span id="contact"></span></footer>
+</div>
+<script src="products.js"></script>
+<script>
+(function(){
+  var S = window.SHOP || {items:[]}, items = (S.items||[]).filter(function(i){ return !i.sold && (i.image || (i.images && i.images[0])); });
+  var fmt = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+  var byCat = {}, picks = [];
+  items.forEach(function(i){ var k = i.category||"Other"; (byCat[k] = byCat[k]||[]).push(i); });
+  Object.keys(byCat).forEach(function(k){ picks.push(byCat[k][0]); });
+  items.forEach(function(i){ if (picks.length < 6 && picks.indexOf(i) < 0) picks.push(i); });
+  var g = document.getElementById("grid");
+  picks.slice(0,6).forEach(function(i){ var src = (i.images && i.images[0]) || i.image; var f = document.createElement("figure"); f.innerHTML = '<img src="' + src.replace(/^images\//,"images/thumbs/") + '" alt=""><figcaption><span>' + i.name + '</span><b>' + (i.price==null ? "Ask" : fmt.format(i.price)) + '</b></figcaption>'; g.appendChild(f); });
+  if (S.url) document.getElementById("url").textContent = S.url.replace(/^https?:\/\//,"").replace(/\/$/,"");
+  if (S.contact && S.contact.location) document.getElementById("pickup").textContent = "Local pickup in " + S.contact.location;
+  document.getElementById("contact").textContent = (S.contact && (S.contact.email || S.contact.sms)) || "";
+})();
+</script>
+</body>
+</html>

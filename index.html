@@ -100,6 +100,9 @@
   .stats svg{width:18px;height:18px;flex:none}
   .pickup{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 16px;border-radius:999px;background:var(--mint);color:var(--on-pastel);font:700 .9rem/1 var(--body)}
   .pickup svg{width:16px;height:16px;flex:none}
+  .hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:420px}
+  .hero-cta .btn{flex:1 1 160px}
+  header .hero-cta{animation:rise .6s .3s cubic-bezier(.2,.8,.2,1) backwards}
   .notice{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 16px;border-radius:18px;background:var(--card);border:2px dashed var(--pink);color:var(--ink);font-size:.92rem;max-width:60ch}
   .notice svg{width:18px;height:18px;flex:none;margin-top:3px;color:var(--heart)}
 
@@ -269,6 +272,7 @@
   .fav[aria-pressed="true"] svg{fill:currentColor}
   .fav[aria-pressed="true"]{animation:beat .6s ease-in-out}
   .chip[data-cat="__saved"][aria-pressed="true"]{background:var(--pink)}
+  .chip[data-cat="__sold"][aria-pressed="true"]{background:var(--line);color:var(--ink)}
   .chip .hv{display:inline-block;width:12px;height:12px;vertical-align:-1px;margin-right:4px;background:var(--heart);clip-path:path("M6 11 L1.2 6.2 A2.9 2.9 0 0 1 6 2.6 A2.9 2.9 0 0 1 10.8 6.2 Z")}
   /* custom orders card */
   .card.custom{background:var(--lavender);color:var(--on-pastel);border-style:solid;border-color:transparent;justify-content:center;text-align:center;padding:26px 20px;gap:10px;min-height:320px;animation:pop .55s cubic-bezier(.2,.8,.2,1) backwards}
@@ -466,6 +470,7 @@
       <h1 id="title">For Sale</h1>
       <p class="tag" id="tagline"></p>
       <div id="pickup"></div>
+      <div class="hero-cta"><a class="btn" href="#grid" id="browseBtn">See all the pieces</a><button type="button" class="btn ghost" id="shareShop">Share the shop</button></div>
     </div>
     <div class="mast-side">
       <div class="collage" id="collage" aria-label="A few of Carly's pieces"></div>
@@ -526,6 +531,7 @@
     <div class="row">
       <button type="button" class="btn" id="adminCopy">Copy updated products.js</button>
       <a class="btn ghost" id="adminEdit" href="https://github.com/williammalone/carlys-shop/edit/main/products.js" target="_blank" rel="noopener">Open products.js on GitHub</a>
+      <a class="btn ghost" href="flyer.html" target="_blank" rel="noopener">Print a flyer</a>
       <button type="button" class="btn ghost" id="adminOff">Exit</button>
     </div>
   </div>
@@ -622,6 +628,8 @@
 
   // chips
   var cat = "All", q = "";
+  function catSlug(k){ return k === "All" ? "" : k === "__saved" ? "saved" : k === "__sold" ? "sold" : slug(k); }
+  function catFromSlug(h){ if (h === "saved") return favs.size ? "__saved" : null; if (h === "sold") return anySold ? "__sold" : null; var hit = cats.filter(function(k){ return slug(k) === h; })[0]; return hit || null; }
   var FAVKEY = "carlys-favs";
   function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAVKEY) || "[]")); } catch (e) { return new Set(); } }
   var favs = loadFavs();
@@ -637,10 +645,11 @@
       h += '<button class="chip" aria-pressed="' + (cat===k) + '" data-cat="' + esc(k) + '">' + esc(k) + '<small>' + n + '</small></button>';
     });
     if (favs.size) h += '<button class="chip" aria-pressed="' + (cat==="__saved") + '" data-cat="__saved"><span class="hv" aria-hidden="true"></span>Saved<small>' + base.filter(function(it){ return favs.has(it._slug); }).length + '</small></button>';
+    if (anySold) h += '<button class="chip" aria-pressed="' + (cat==="__sold") + '" data-cat="__sold">Sold<small>' + items.filter(function(it){ return it.sold; }).length + '</small></button>';
     $("chips").innerHTML = h;
     Array.prototype.forEach.call($("chips").children, function(ch, k){ ch.style.setProperty("--k", k); });
   }
-  $("chips").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if(!b) return; cat = b.getAttribute("data-cat"); chips(); render(); });
+  $("chips").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if(!b) return; cat = b.getAttribute("data-cat"); chips(); render(); var cs = catSlug(cat); history.replaceState(null, "", location.pathname + location.search + (cs ? "#" + cs : "")); });
 
   function contactHref(item){
     var msg = "Hi! Is the \"" + item.name + "\"" + (item.price != null && item.price > 0 ? " (" + priceText(item.price) + ")" : "") + " still available? " + itemUrl(item);
@@ -707,7 +716,8 @@
   function render(){
     var sort = $("sort").value;
     var list = visibleBase();
-    if (cat === "__saved") list = list.filter(function(it){ return favs.has(it._slug); });
+    if (cat === "__sold") list = items.filter(function(it){ return it.sold; });
+    else if (cat === "__saved") list = list.filter(function(it){ return favs.has(it._slug); });
     else if (cat !== "All") list = list.filter(function(it){ return (it.category||"Other")===cat; });
     list = list.filter(matches);
     if (sort==="price-asc") list.sort(function(a,b){ return pv(a)-pv(b); });
@@ -716,7 +726,7 @@
     else list.sort(function(a,b){ return a._i-b._i; });
 
     lastList = list.slice();
-    $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
+    $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
     if (!list.length){ grid.innerHTML = '<p class="empty">' + (q ? "No pieces match \"" + esc(q) + "\". Try another word." : cat === "__saved" ? "Nothing saved yet. Tap the heart on a piece to keep it here." : "Nothing here right now.") + '</p>'; return; }
     list.forEach(function(it){
@@ -848,7 +858,7 @@
   $("shnext").addEventListener("click", function(){ step(1); });
   $("shx").addEventListener("click", function(){ sheet.close(); });
   sheet.addEventListener("click", function(e){ if (e.target === sheet) sheet.close(); });
-  sheet.addEventListener("close", function(){ cur = null; if (location.hash) history.replaceState(null, "", location.pathname + location.search); });
+  sheet.addEventListener("close", function(){ cur = null; var cs = catSlug(cat); history.replaceState(null, "", location.pathname + location.search + (cs ? "#" + cs : "")); });
   document.addEventListener("keydown", function(e){ if(!sheet.open) return; if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1); });
   var sx = null;
   $("shimg").addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; }, {passive:true});
@@ -863,7 +873,7 @@
   }
   var toastTimer;
   function toast(msg){ var t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 2600); }
-  function openFromHash(){ var h = location.hash.replace(/^#/,""); if (!h) return; var it = items.filter(function(x){ return x._slug === h; })[0]; if (it) openSheet(it, 0); }
+  function openFromHash(){ var h = location.hash.replace(/^#/,""); if (!h) return; var it = items.filter(function(x){ return x._slug === h; })[0]; if (it){ openSheet(it, 0); return; } var k = catFromSlug(h); if (k){ cat = k; chips(); render(); } }
   window.addEventListener("hashchange", openFromHash);
 
   // how it works + footer
@@ -943,6 +953,13 @@
       var done = function(){ toast(n ? "Copied with " + n + " change" + (n > 1 ? "s" : "") + ". Paste over products.js on GitHub and commit." : "Copied. No changes yet, tap Mark sold on a card first."); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(out).then(done, function(){ prompt("Copy this:", out); }); else prompt("Copy this:", out);
     }).catch(function(){ toast("Couldn't read products.js from this host."); });
+  });
+  $("browseBtn").addEventListener("click", function(e){ e.preventDefault(); document.getElementById("grid").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); });
+  $("shareShop").addEventListener("click", function(){
+    var url = (S.url || (location.origin + location.pathname)).replace(/#.*$/, ""), title = S.title || "Shop";
+    if (navigator.share){ navigator.share({ title: title, text: S.tagline || "", url: url }).catch(function(){}); return; }
+    var done = function(){ toast("Shop link copied. Send it to someone who loves handmade."); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function(){ prompt("Copy this link:", url); }); else prompt("Copy this link:", url);
   });
   if (S.about && (S.about.text || S.about.image)){
     $("about").hidden = false;

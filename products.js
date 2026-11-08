@@ -1,6 +1,7 @@
 // Items for sale. Edit this file only; index.html reads it.
 // Fields per item:
 //   name         shown on the card
+//   category     groups items into the filter chips (Blankets, Wearables, Home & Cats, Art, Cards)
 //   price        number in USD. null = "Ask" (no price set yet). 0 = "Free".
 //   condition    short line under the name
 //   description  a sentence or two
@@ -11,7 +12,9 @@
 // Prices below are all null because Carly's messages didn't include any. Set each one.
 window.SHOP = {
   title: "Carly's Handmade Blankets & Art",
-  tagline: "Chunky knit blankets, crochet, and original paintings. Handmade in Colorado.",
+  tagline: "Chunky knit blankets, crochet you can wear, beds your cat will steal, and original paintings. All handmade in Colorado.",
+  eyebrow: "Handmade · one of each",
+  payment: "Cash or Venmo at pickup.",
   contact: {
     // Buyers tap "I'm interested" to open one of these. Fill in one or both.
     sms: "",        // e.g. "+13035551234"
@@ -22,6 +25,7 @@ window.SHOP = {
     // --- Chunky knit blankets ---
     {
       name: "Navy chunky knit blanket",
+      category: "Blankets",
       price: null,
       condition: "New, handmade",
       description: "Hand-knit chenille blanket in deep navy with color-blocked teal and sage ends. Oversized and heavy enough to wear like a wrap.",
@@ -30,6 +34,7 @@ window.SHOP = {
     },
     {
       name: "Purple chunky knit blanket",
+      category: "Blankets",
       price: null,
       condition: "New, handmade",
       description: "Hand-knit chenille throw in plum purple. Covers most of a queen bed. Cat not included.",
@@ -38,6 +43,7 @@ window.SHOP = {
     },
     {
       name: "Grey two-tone chunky knit blanket",
+      category: "Blankets",
       price: null,
       condition: "New, handmade",
       description: "Hand-knit chenille blanket in light and dark grey stripes. Big enough to wrap up in.",
@@ -48,6 +54,7 @@ window.SHOP = {
     // --- Crochet wearables ---
     {
       name: "Grey crochet off-shoulder sweater",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Cropped boxy sweater with a granny-square motif on the front and wide bell sleeves. Wears off the shoulder. Fits roughly S to M.",
@@ -56,6 +63,7 @@ window.SHOP = {
     },
     {
       name: "Granny-square hooded scarf",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Long crochet scarf in mustard, olive, and brown granny squares with a built-in hood. Wear it as a scarf or pull the hood up.",
@@ -64,6 +72,7 @@ window.SHOP = {
     },
     {
       name: "Purple granny-stitch beanie",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Slouchy crochet beanie in purple, teal, and cream with a dark purple brim.",
@@ -72,6 +81,7 @@ window.SHOP = {
     },
     {
       name: "Teal beanie with gold crown",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Sparkly teal crochet beanie with a folded brim and a little gold crown on top.",
@@ -80,6 +90,7 @@ window.SHOP = {
     },
     {
       name: "Grey crochet slippers",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Thick grey crochet house slippers with a ribbed top. Women's medium.",
@@ -88,6 +99,7 @@ window.SHOP = {
     },
     {
       name: "Crochet water-bottle sling",
+      category: "Wearables",
       price: null,
       condition: "New, handmade",
       description: "Crossbody bottle holder in pink, green, and purple stripes with a long strap. Fits a standard water bottle.",
@@ -98,6 +110,7 @@ window.SHOP = {
     // --- Home and cat things ---
     {
       name: "Chunky crochet cat bed, mint and white",
+      category: "Home & Cats",
       price: null,
       condition: "New, handmade",
       description: "Round cat bed in soft chenille, white with mint flecks. Cat-tested and approved, see photos.",
@@ -106,6 +119,7 @@ window.SHOP = {
     },
     {
       name: "Chunky crochet cat bed, grey marble",
+      category: "Home & Cats",
       price: null,
       condition: "New, handmade",
       description: "Round cat bed in marbled grey, black, and white chenille. Same size as the mint one.",
@@ -114,6 +128,7 @@ window.SHOP = {
     },
     {
       name: "Crochet flower coasters, set of 4",
+      category: "Home & Cats",
       price: null,
       condition: "New, handmade",
       description: "Flower-shaped coasters in red, pink, yellow, and purple with lime centers. Set of four.",
@@ -122,6 +137,7 @@ window.SHOP = {
     },
     {
       name: "Crochet potted flowers",
+      category: "Home & Cats",
       price: null,
       condition: "New, handmade",
       description: "A bouquet of ruffled crochet flowers in purple, yellow, and pink in a brown crochet pot. Never needs water.",
@@ -130,6 +146,7 @@ window.SHOP = {
     },
     {
       name: "Cat measuring cups with knit tails",
+      category: "Home & Cats",
       price: null,
       condition: "Like new",
       description: "Set of four ceramic cat measuring cups (1/4 to 1 cup) with black knit tail sleeves on the handles.",
@@ -140,6 +157,7 @@ window.SHOP = {
     // --- Paintings and drawings ---
     {
       name: "Rainbow cat, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original, ready to hang",
       description: "Bold cat portrait in orange, green, blue, and purple brushwork on a purple background. Roughly 18 x 24 inches.",
@@ -148,6 +166,7 @@ window.SHOP = {
     },
     {
       name: "Purple octopus, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original",
       description: "Purple octopus with dotted tentacles on a swirling teal and blue background. Roughly 16 x 20 inches.",
@@ -156,6 +175,7 @@ window.SHOP = {
     },
     {
       name: "Cherry blossoms, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original",
       description: "Pink cherry blossom branches on a warm pink and orange sky. Roughly 12 x 24 inches.",
@@ -164,6 +184,7 @@ window.SHOP = {
     },
     {
       name: "Husky on green, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original",
       description: "Black and white husky portrait on a textured green background. Roughly 11 x 14 inches.",
@@ -172,6 +193,7 @@ window.SHOP = {
     },
     {
       name: "Husky in purple, watercolor",
+      category: "Art",
       price: null,
       condition: "Original, on paper",
       description: "Loose watercolor husky with amber eyes and a purple-and-white coat against a purple and green wash.",
@@ -180,6 +202,7 @@ window.SHOP = {
     },
     {
       name: "Brown husky, watercolor",
+      category: "Art",
       price: null,
       condition: "Original, on paper",
       description: "Brown and white husky portrait on a soft purple wash.",
@@ -188,6 +211,7 @@ window.SHOP = {
     },
     {
       name: "Stag with paint splatter, watercolor",
+      category: "Art",
       price: null,
       condition: "Original, on paper",
       description: "Grey stag with full antlers surrounded by purple, pink, and blue splatter.",
@@ -196,6 +220,7 @@ window.SHOP = {
     },
     {
       name: "Orange tabby, pastel on paper",
+      category: "Art",
       price: null,
       condition: "Original, on paper",
       description: "Orange and white tabby cat with green eyes, drawn in pastel and colored pencil.",
@@ -204,6 +229,7 @@ window.SHOP = {
     },
     {
       name: "Grey cat, charcoal and pastel",
+      category: "Art",
       price: null,
       condition: "Original, on paper",
       description: "Grey and white cat with bright green eyes, sketched in charcoal with pastel accents.",
@@ -212,6 +238,7 @@ window.SHOP = {
     },
     {
       name: "Sunburst pair, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original, set of 2",
       description: "Two matching sunburst canvases: one in warm oranges and pinks, one in cool blues and greens. Hang them together or apart.",
@@ -220,6 +247,7 @@ window.SHOP = {
     },
     {
       name: "Geometric abstract and sunburst, acrylic on canvas",
+      category: "Art",
       price: null,
       condition: "Original, set of 2",
       description: "A colorful geometric abstract in blues, greens, and yellows, plus a pink-and-orange sunburst. Sold as a pair or separately.",
@@ -230,6 +258,7 @@ window.SHOP = {
     // --- Cards ---
     {
       name: "Handmade pop-up cards, made to order",
+      category: "Cards",
       price: null,
       condition: "Made to order",
       description: "Hand-cut pop-up greeting cards with a custom message. Shown: a \"Happy Meow-thers Day\" card with a pop-up cat in a plant pot.",

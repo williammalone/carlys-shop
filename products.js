@@ -8,6 +8,7 @@
 //   image        main photo (relative path). Optional if `images` is set.
 //   images       optional list of photos; the first is the main one, the rest show as thumbnails
 //   sold         true hides it by default and shows a SOLD badge
+//   buy          optional Stripe Payment Link URL; shows a "Buy now" button
 //
 // Prices were set Nov 8, 2026 from current Etsy/market asking prices for comparable handmade work,
 // discounted for a local cash sale. Adjust freely; null shows "Ask".
@@ -17,6 +18,16 @@ window.SHOP = {
   eyebrow: "Handmade · one of each",
   payment: "Cash or Venmo at pickup.",
   url: "https://williammalone.github.io/carlys-shop/",   // used for share links and previews
+  // Payments. Fill any of these and "Pay $X with ..." buttons appear in each item's detail view,
+  // prefilled with the price and item name. Leave empty to hide.
+  payments: {
+    venmo: "",      // Venmo username, e.g. "Carly-Smith-12" (from venmo.com/u/<username>)
+    cashapp: "",    // $cashtag without the $, e.g. "carlymakes"
+    paypal: "",     // PayPal.Me name, e.g. "carlymakes"
+    note: "Message first so we can confirm it's still available, then pay."
+  },
+  // Per item you can also add  buy: "https://buy.stripe.com/..."  (a Stripe Payment Link).
+  // When present, the card shows a "Buy now" button that takes cards and Apple Pay.
   about: {
     title: "About Carly",
     text: "Every piece here was made by hand by Carly in Colorado: chunky chenille blankets knit by the armful, crochet she wears herself first, beds her cat test-drives, and paintings of the animals she loves. Nothing is mass-made and nothing is repeated, so when a piece is gone, it's gone.",

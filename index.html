@@ -334,6 +334,16 @@
   :root[data-motion="off"] .ph img{opacity:1}
   :root[data-motion="off"] .fl{display:none}
 
+  /* payments */
+  .btn.buy{background:var(--heart);color:#fff;box-shadow:0 3px 0 #b8365f}
+  .btn.buy:hover{filter:none}
+  .pay{border-top:2px dashed var(--line);padding-top:12px;margin-top:4px}
+  .pay-title{font:700 .78rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+  .pay-row{display:flex;gap:8px;flex-wrap:wrap}
+  .paybtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border-radius:999px;text-decoration:none;font:800 .92rem/1 var(--body);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.18);transition:transform .12s}
+  .paybtn:hover{transform:translateY(-1px)}
+  .paybtn.venmo{background:#008CFF} .paybtn.cashapp{background:#00D632;color:#0b2a12} .paybtn.paypal{background:#003087}
+
   /* motion */
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{opacity:0;transform:translateY(18px) scale(.96)}70%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
@@ -614,6 +624,16 @@
   function thumb(src){ return /^images\/[^/]+\.jpe?g$/i.test(src) ? src.replace(/^images\//, "images/thumbs/") : ""; }
   function setSrc(img, src){ var t = thumb(src); img.src = t || src; img.srcset = t ? t + " 600w, " + src + " 1200w" : ""; }
   function priceText(p){ return p==null ? "Ask us" : (p===0 ? "Free" : fmt.format(p)); }
+  var PAY = S.payments || {};
+  function payLinks(it){
+    var out = [], amt = it.price, note = it.name + " (Carly's Handmade)";
+    if (!(amt > 0)) return out;
+    if (PAY.venmo) out.push({ name: "Venmo", href: "https://venmo.com/u/" + encodeURIComponent(PAY.venmo.replace(/^@/, "")) + "?txn=pay&amount=" + amt + "&note=" + encodeURIComponent(note), cls: "venmo" });
+    if (PAY.cashapp) out.push({ name: "Cash App", href: "https://cash.app/$" + encodeURIComponent(PAY.cashapp.replace(/^\$/, "")) + "/" + amt, cls: "cashapp" });
+    if (PAY.paypal) out.push({ name: "PayPal", href: "https://paypal.me/" + encodeURIComponent(PAY.paypal.replace(/^@/, "")) + "/" + amt + "USD", cls: "paypal" });
+    return out;
+  }
+  function buyHref(it){ return (!it.sold && it.buy) ? it.buy : ""; }
   function pv(it){ return it.price==null ? Infinity : it.price; }
 
   function render(){
@@ -665,8 +685,9 @@
       if (it.condition){ var cd = document.createElement("div"); cd.className="cond"; cd.textContent = it.condition; body.appendChild(cd); }
       if (it.description){ var d = document.createElement("p"); d.className="desc"; d.textContent = it.description; body.appendChild(d); }
       var act = document.createElement("div"); act.className="actions";
-      var href = contactHref(it);
+      var href = contactHref(it), buy = buyHref(it);
       if (it.sold){ var sb = document.createElement("span"); sb.className="btn"; sb.textContent="Sold"; sb.setAttribute("aria-disabled","true"); act.appendChild(sb); }
+      else if (buy){ var ba = document.createElement("a"); ba.className="btn buy"; ba.href=buy; ba.target="_blank"; ba.rel="noopener"; ba.textContent="Buy now"; act.appendChild(ba); }
       else if (href){ var a = document.createElement("a"); a.className="btn"; a.href=href; a.textContent="I'm interested"; act.appendChild(a); }
       var det = document.createElement("button"); det.type="button"; det.className="btn ghost"; det.textContent="Details"; det.addEventListener("click", function(){ openSheet(it, shown); }); act.appendChild(det);
       body.appendChild(act);
@@ -699,14 +720,21 @@
     $("shmeta").innerHTML = meta;
     var href = contactHref(it), cta = "";
     var saved = favs.has(it._slug);
-    var tools = '<div class="row">' + (it.sold ? "" : href ? '<a class="btn" href="' + esc(href) + '">I\'m interested</a>' : "") +
+    var buy = buyHref(it), pays = it.sold ? [] : payLinks(it);
+    var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<a class="btn" href="' + esc(href) + '">I\'m interested</a>' : "") +
+      (buy && href ? '<a class="btn ghost" href="' + esc(href) + '">Ask</a>' : "") +
       '<button type="button" class="btn ghost" id="shfav" aria-pressed="' + saved + '">' + (saved ? "♥ Saved" : "♡ Save") + '</button>' +
       '<button type="button" class="btn ghost" id="shshare">Share</button></div>';
+    var payHtml = "";
+    if (pays.length){
+      payHtml = '<div class="pay"><div class="pay-title">' + (buy ? "Or pay directly" : "Pay " + esc(priceText(it.price))) + '</div><div class="pay-row">' + pays.map(function(l){ return '<a class="paybtn ' + l.cls + '" href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.name) + '</a>'; }).join("") + '</div><p class="hint">' + esc(PAY.note || "Message first so we can confirm it's still available, then pay.") + '</p></div>';
+    }
     if (it.sold) cta = tools + '<p class="hint">This one has found a home. Browse the rest, or ask about a custom piece.</p>';
-    else if (href) cta = tools + '<p class="hint">Opens a' + (c.sms ? " text" : "n email") + ' with the item name filled in. Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>';
-    else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>';
+    else if (buy) cta = tools + '<p class="hint">Secure checkout with card or Apple Pay. ' + (href ? 'Questions? <a href="' + esc(href) + '">Send a message</a>.' : '') + '</p>' + payHtml;
+    else if (href) cta = tools + '<p class="hint">Opens a' + (c.sms ? " text" : "n email") + ' with the item name filled in. Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
+    else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>' + payHtml;
     $("shcta").innerHTML = cta;
-    $("shbar").innerHTML = (!it.sold && href) ? '<a class="btn" href="' + esc(href) + '">I\'m interested · ' + esc(priceText(it.price)) + '</a>' : "";
+    $("shbar").innerHTML = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<a class="btn" href="' + esc(href) + '">I\'m interested · ' + esc(priceText(it.price)) + '</a>' : "";
     $("shfav").addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
     $("shshare").addEventListener("click", function(){ shareItem(it); });
     var rel = items.filter(function(x){ return x !== it && !x.sold && (x.category||"") === (it.category||"") }).slice(0, 4);
@@ -774,6 +802,7 @@
   if (c.email) cl.push('email <code>' + esc(c.email) + '</code>');
   $("contactline").innerHTML = cl.length ? "Prefer to reach out directly? " + cl.join(" or ") + "." : "";
   if (S.payment) $("paytext").textContent = S.payment;
+  if (items.some(function(it){ return it.buy; })) { $("step1b").textContent = "Tap \"Buy now\""; $("step1").textContent = "Secure checkout with card or Apple Pay. One of each, so it's yours the moment you pay."; document.querySelector(".steps li:nth-child(2) b").textContent = "We'll be in touch"; document.querySelector(".steps li:nth-child(2) span").textContent = "You'll get a receipt by email and we'll arrange pickup" + (c.location ? " in " + c.location : "") + "."; }
   $("footer").innerHTML = esc(S.footer || "Made with") + ' <span class="heart" aria-label="love">&#9829;</span> ' + esc("by Carly") + (c.location ? " in " + esc(c.location) : "") + ".";
 
   $("sort").addEventListener("change", render);

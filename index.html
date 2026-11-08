@@ -65,7 +65,10 @@
   .wrap{max-width:1380px;margin:0 auto;padding-left:max(clamp(16px,4vw,48px),env(safe-area-inset-left,0px));padding-right:max(clamp(16px,4vw,48px),env(safe-area-inset-right,0px))}
 
   /* woven pastel ribbon */
-  .yarn{height:10px;background:linear-gradient(90deg,var(--pink) 0 20%,var(--butter) 20% 40%,var(--mint) 40% 60%,var(--lavender) 60% 80%,var(--sky) 80% 100%)}
+  .yarn{height:14px;position:relative;overflow:hidden;background:linear-gradient(90deg,var(--pink) 0 20%,var(--butter) 20% 40%,var(--mint) 40% 60%,var(--lavender) 60% 80%,var(--sky) 80% 100%);background-size:400px 100%}
+  .yarn::before{content:"";position:absolute;inset:0;background:
+    linear-gradient(135deg,rgba(255,255,255,.35) 25%,transparent 25% 50%,rgba(255,255,255,.35) 50% 75%,transparent 75%) 0 0/14px 14px;opacity:.9}
+  .yarn::after{content:"";position:absolute;top:0;bottom:0;left:-30%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:sheen 4.5s ease-in-out infinite}
 
   header{padding-block:30px 16px;position:relative}
   .floaties{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
@@ -101,7 +104,16 @@
   .notice svg{width:18px;height:18px;flex:none;margin-top:3px;color:var(--heart)}
 
   /* sticky filter bar */
-  .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 96%,transparent);backdrop-filter:blur(12px);border-block:2px dashed var(--line);padding-block:10px;margin-top:22px}
+  .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--bg) 96%,transparent);backdrop-filter:blur(12px);border-block:2px dashed var(--line);padding-block:10px;margin-top:22px;transition:box-shadow .3s,padding .3s,background .3s}
+  .bar.stuck{box-shadow:0 10px 30px rgba(120,80,110,.14);padding-block:8px;background:color-mix(in srgb,var(--card) 92%,transparent)}
+  :root[data-theme="dark"] .bar.stuck{box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bar.stuck{box-shadow:0 10px 30px rgba(0,0,0,.45)}}
+  .minilogo{display:none;width:0;overflow:hidden;flex:none;transition:width .35s cubic-bezier(.2,.8,.2,1),opacity .3s;opacity:0}
+  .minilogo img{display:block;width:40px;height:39px;animation:bob 4s ease-in-out infinite}
+  .bar.stuck .minilogo{width:40px;opacity:1}
+  @media (min-width:701px){.minilogo{display:block}}
+  .bar.stuck .chip{animation:chipIn .4s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--k,0) * 40ms)}
+  @keyframes chipIn{from{transform:translateY(-6px);opacity:.6}to{transform:none;opacity:1}}
   body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
   .bar .wrap{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
   .chips{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0}
@@ -325,7 +337,7 @@
   /* motion */
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{opacity:0;transform:translateY(18px) scale(.96)}70%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
-  @keyframes drift{from{background-position:0 0}to{background-position:200px 0}}
+  @keyframes drift{from{background-position:0 0}to{background-position:400px 0}}
   @keyframes draw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
   @keyframes swing{0%,100%{transform:rotate(-5deg)}30%{transform:rotate(4deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(1deg)}}
   @keyframes beat{0%,100%{transform:scale(1)}30%{transform:scale(1.3)}50%{transform:scale(1)}70%{transform:scale(1.2)}}
@@ -333,7 +345,10 @@
   @keyframes sheetIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes wiggle{0%,100%{transform:none}25%{transform:rotate(-2deg) scale(1.04)}75%{transform:rotate(2deg) scale(1.04)}}
-  .yarn{background-size:200px 100%;animation:drift 14s linear infinite}
+  .yarn{animation:drift 10s linear infinite}
+  .yarn::before{animation:stitch 1.6s linear infinite}
+  @keyframes stitch{from{background-position:0 0}to{background-position:14px 0}}
+  @keyframes sheen{0%{left:-30%}60%,100%{left:130%}}
   header .brand,header .eyebrow,header h1,header .tag,header #pickup,header .notice,header .stats{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
   @keyframes bob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-2px)}}
   .brand .logo{animation:bob 4s ease-in-out infinite}
@@ -395,7 +410,7 @@
 </style>
 </head>
 <body>
-<a class="skip" href="#grid">Skip to the items</a>
+<a class="skip" href="#grid">Skip to the items</a><span id="top"></span>
 <div class="yarn" aria-hidden="true"></div>
 <header class="wrap">
   <div class="floaties" aria-hidden="true">
@@ -421,8 +436,10 @@
   </div>
 </header>
 
+<div id="barSentinel" aria-hidden="true"></div>
 <nav class="bar" aria-label="Browse the shop">
   <div class="wrap">
+    <a class="minilogo" href="#top" aria-label="Back to top"><img src="images/logo.svg" alt="" width="40" height="39"></a>
     <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
     <div class="ctrl">
       <label class="search" for="q"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg><input type="search" id="q" placeholder="Search pieces" autocomplete="off"></label>
@@ -562,6 +579,7 @@
     });
     if (favs.size) h += '<button class="chip" aria-pressed="' + (cat==="__saved") + '" data-cat="__saved"><span class="hv" aria-hidden="true"></span>Saved<small>' + base.filter(function(it){ return favs.has(it._slug); }).length + '</small></button>';
     $("chips").innerHTML = h;
+    Array.prototype.forEach.call($("chips").children, function(ch, k){ ch.style.setProperty("--k", k); });
   }
   $("chips").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if(!b) return; cat = b.getAttribute("data-cat"); chips(); render(); });
 
@@ -769,6 +787,11 @@
     label();
   })();
   window.addEventListener("scroll", function(){ $("totop").hidden = window.scrollY < 700; }, {passive:true});
+  (function(){
+    var bar = document.querySelector(".bar"), sent = $("barSentinel");
+    if ("IntersectionObserver" in window){ new IntersectionObserver(function(en){ var stuck = !en[0].isIntersecting; if (bar.classList.contains("stuck") !== stuck){ bar.classList.toggle("stuck", stuck); if (stuck) Array.prototype.forEach.call(bar.querySelectorAll(".chip"), function(ch, k){ ch.style.setProperty("--k", k); }); } }, {rootMargin: "-1px 0px 0px 0px", threshold: 0}).observe(sent); }
+    document.querySelector(".minilogo").addEventListener("click", function(e){ e.preventDefault(); window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
+  })();
   $("totop").addEventListener("click", function(){ window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" }); });
   (function(){
     var picks = [], seen = {};

@@ -2,13 +2,13 @@
 
 **Status:** Storefront is built and pushed. It is waiting on the real item list. Everything in `shop/products.js` is a placeholder.
 **Branch:** `claude/confident-thompson-navxwa` in `williammalone/xeriscaping` (supersedes `claude/gracious-darwin-6mrazt`, which is merged in)
-**Last updated:** November 8, 2026
+**Last updated:** November 8, 2026 (fourth session)
 
 ## What this is
 
 William wants a simple website to sell items that Carly sent him by text message. Carly texted photos of chunky knit blankets in two batches (22 and 23 photos, 45 total), which William saved to the Photos app on his Mac on Nov 6. From the one screenshot seen so far, the items look like handmade blankets (chevron pattern, green/blue/grey). No prices or descriptions have been seen yet.
 
-Three sessions so far (Nov 7, Nov 7, Nov 8) ran in cloud containers and could not reach the Mac, so the photos never arrived. The second session also checked Gmail for the iCloud link or a message from Carly and found nothing. The third session confirmed no Mac folder is shared with cloud sessions via Remote Control and that no branch in the repo has the photos. Photos are the only blocker.
+Four sessions so far (Nov 7, Nov 7, Nov 8, Nov 8) ran in cloud containers and could not reach the Mac, so the photos never arrived. The second session also checked Gmail for the iCloud link or a message from Carly and found nothing. The third session confirmed no Mac folder is shared with cloud sessions via Remote Control and that no branch in the repo has the photos. The fourth session found three folders in the Mac's Remote Control list (`tappable`, `omnissiah`, `assistant`) but the Mac does not offer any of them to cloud sessions, and none is this repo or the Photos library anyway. It added `shop/tools/export-from-photos.sh` so the Mac-side step is one command. Photos are the only blocker, and they will stay blocked until a session runs on the Mac itself or the JPEGs are attached to a chat message or uploaded on GitHub.
 
 ## What already exists
 
@@ -16,14 +16,15 @@ Three sessions so far (Nov 7, Nov 7, Nov 8) ran in cloud containers and could no
 - `shop/products.js` — the only file to edit. Sets `title`, `tagline`, `contact` (phone for SMS, or email), and the `items` array. Three placeholder items are in it now.
 - `shop/README.md` — field reference for `products.js`.
 - `shop/images/` — empty, ready for the resized photos.
+- `shop/tools/export-from-photos.sh` — **run on the Mac, from the repo root.** Drives the Photos app via AppleScript to export an album (default name `Carly blankets`) as JPEG into `shop/tools/export/` (git-ignored), pauses so files can be renamed, then runs `resize-images.py --stub`. `--date 2026-11-06` filters by capture date instead, but texted photos carry Carly's capture date, so the album is more reliable. First run asks for permission to control Photos.
 - `shop/tools/resize-images.py` — resizes a folder of exported JPEGs to 1200px long side, JPEG q80, auto-rotates, strips EXIF/GPS, writes to `shop/images/`. `--stub` prints a `products.js` item per photo to paste in. Needs Pillow (`python3 -m pip install pillow`); already present in cloud containers. Does not read HEIC, so export from Photos as JPEG.
 - The "I'm interested" button on each card opens a pre-filled text (if `contact.sms` is set) or email (if `contact.email` is set).
 
 ## Next session: do this
 
-Get the photos into the repo first. Any one of these works:
+**Do not start another cloud session for this until the photos are in reach.** Get the photos into the repo first. Any one of these works:
 
-- **Run from the Mac.** Open the repo in the Claude desktop app, or run `claude remote-control` in the repo folder, so the session can read the exported files directly. (A cloud session can only reach the Mac if a folder is shared under Settings > Claude Code > Remote Control in the desktop app; none was shared as of Nov 8.)
+- **Run from the Mac (fastest).** Open the repo folder in the Claude desktop app, or run `claude remote-control` in the repo folder. Then: in Photos, select the 45 photos, right-click > Add to > New Album named `Carly blankets`. Run `bash shop/tools/export-from-photos.sh`. It exports, resizes into `shop/images/`, and prints the `products.js` stubs. Skip to step 2 below. (A cloud session can only reach the Mac if a folder is shared under Settings > Claude Code > Remote Control in the desktop app and the Mac serves it to cloud sessions; as of Nov 8 the three listed folders are not served, and none is this repo.)
 - **Attach them to the chat.** In a cloud session, drop the exported JPEGs into a message. They land in the container and can be moved into `shop/images/`.
 - **Upload on GitHub.** On github.com, switch to the branch above, open `shop/`, use Add file > Upload files, and put them in `shop/images/`. Then start a session and say the photos are there.
 

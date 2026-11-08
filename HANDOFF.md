@@ -25,6 +25,21 @@ Four sessions so far (Nov 7, Nov 7, Nov 8, Nov 8) ran in cloud containers and co
 **Do not start another cloud session for this until the photos are in reach.** Get the photos into the repo first. Any one of these works:
 
 - **Run from the Mac (fastest).** Open the repo folder in the Claude desktop app, or run `claude remote-control` in the repo folder. Then: in Photos, select the 45 photos, right-click > Add to > New Album named `Carly blankets`. Run `bash shop/tools/export-from-photos.sh`. It exports, resizes into `shop/images/`, and prints the `products.js` stubs. Skip to step 2 below. (A cloud session can only reach the Mac if a folder is shared under Settings > Claude Code > Remote Control in the desktop app and the Mac serves it to cloud sessions; as of Nov 8 the three listed folders are not served, and none is this repo.)
+- **No repo on the Mac? Export with one Terminal command, then upload.** In Photos, select the 45 photos (click the first, shift-click the last). Paste this in Terminal (it asks once for permission to control Photos):
+
+  ```bash
+  mkdir -p ~/Desktop/carly-export && osascript -e 'set outFolder to (POSIX file (POSIX path of (path to desktop folder) & "carly-export")) as alias
+  tell application "Photos"
+    set sel to selection
+    if (count of sel) is 0 then error "Nothing selected in Photos. Click the first photo, shift-click the last, then run again."
+    with timeout of 1800 seconds
+      export sel to outFolder using originals false
+    end timeout
+    return ((count of sel) as text) & " photos exported to ~/Desktop/carly-export"
+  end tell' && open ~/Desktop/carly-export
+  ```
+
+  Then drag everything in that folder onto the GitHub upload page for `shop/images/` on this branch (`https://github.com/williammalone/xeriscaping/upload/claude/confident-thompson-navxwa/shop/images`), commit, and tell the session. The cloud session resizes and fills `products.js` from there. (`export-from-photos.sh --selection` does the same thing when the repo is on the Mac.)
 - **Attach them to the chat.** In a cloud session, drop the exported JPEGs into a message. They land in the container and can be moved into `shop/images/`.
 - **Upload on GitHub.** On github.com, switch to the branch above, open `shop/`, use Add file > Upload files, and put them in `shop/images/`. Then start a session and say the photos are there.
 

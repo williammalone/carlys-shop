@@ -5,6 +5,7 @@
 #   bash shop/tools/export-from-photos.sh                 # exports album "Carly blankets"
 #   bash shop/tools/export-from-photos.sh --album "Name"  # a different album
 #   bash shop/tools/export-from-photos.sh --date 2026-11-06   # by capture date instead
+#   bash shop/tools/export-from-photos.sh --selection  # whatever is selected in Photos right now
 #
 # Before running: in Photos, select the 45 photos Carly texted, right-click >
 # Add to > New Album, and name it "Carly blankets" (top level, not inside a folder).
@@ -18,10 +19,12 @@ set -euo pipefail
 
 ALBUM="Carly blankets"
 DATE=""
+SELECTION=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --album) ALBUM="$2"; shift 2 ;;
     --date)  DATE="$2";  shift 2 ;;
+    --selection) SELECTION=1; shift ;;
     -h|--help) sed -n '2,17p' "$0"; exit 0 ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
   esac
@@ -37,7 +40,22 @@ EXPORT_DIR="$PWD/shop/tools/export"
 mkdir -p "$EXPORT_DIR"
 rm -f "$EXPORT_DIR"/*.jpeg "$EXPORT_DIR"/*.jpg "$EXPORT_DIR"/*.JPG "$EXPORT_DIR"/*.JPEG 2>/dev/null || true
 
-if [ -n "$DATE" ]; then
+if [ -n "$SELECTION" ]; then
+  echo "Exporting the photos currently selected in Photos ..."
+  osascript - "$EXPORT_DIR" <<'APPLESCRIPT'
+on run argv
+  set outFolder to (POSIX file (item 1 of argv)) as alias
+  tell application "Photos"
+    set theItems to selection
+    if (count of theItems) is 0 then error "Nothing is selected in Photos. Click the first photo, shift-click the last, then run this again."
+    with timeout of 1800 seconds
+      export theItems to outFolder using originals false
+    end timeout
+    return (count of theItems)
+  end tell
+end run
+APPLESCRIPT
+elif [ -n "$DATE" ]; then
   IFS=- read -r Y M D <<< "$DATE"
   echo "Exporting photos captured on $DATE ..."
   osascript - "$EXPORT_DIR" "$Y" "$M" "$D" <<'APPLESCRIPT'

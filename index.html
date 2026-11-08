@@ -344,6 +344,23 @@
   .paybtn:hover{transform:translateY(-1px)}
   .paybtn.venmo{background:#008CFF} .paybtn.cashapp{background:#00D632;color:#0b2a12} .paybtn.paypal{background:#003087}
 
+  /* claim form */
+  .claim{display:flex;flex-direction:column;gap:10px;border-top:2px dashed var(--line);padding-top:14px;margin-top:4px;animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+  .claim-title{font:600 1.1rem/1.2 var(--display)}
+  .claim label{display:flex;flex-direction:column;gap:5px;font:700 .8rem/1.3 var(--body);color:var(--muted)}
+  .claim label .opt{font-weight:600;opacity:.7}
+  .claim input,.claim select,.claim textarea{font:600 .95rem var(--body);color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px 12px;min-height:44px;outline:none}
+  .claim textarea{resize:vertical;min-height:60px}
+  .claim input:focus,.claim select:focus,.claim textarea:focus{border-color:var(--pink)}
+  .claim-pay{display:flex;flex-wrap:wrap;gap:8px}
+  .claim-pay .lbl{flex-basis:100%;font:700 .8rem/1.3 var(--body);color:var(--muted)}
+  .claim-pay label{flex-direction:row;align-items:center;gap:6px;cursor:pointer;min-height:40px;padding:0 14px;border-radius:999px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 .9rem var(--body)}
+  .claim-pay input{position:absolute;opacity:0;width:0;height:0;min-height:0}
+  .claim-pay label:has(input:checked){background:var(--mint);border-color:transparent;color:var(--on-pastel)}
+  .claim-pay label:has(input:focus-visible){outline:3px solid var(--heart);outline-offset:2px}
+  .accepted{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 .8rem var(--body);color:var(--muted);margin-top:2px}
+  .accepted span{background:var(--well);color:var(--ink);border-radius:999px;padding:5px 10px;font-weight:700}
+
   /* motion */
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{opacity:0;transform:translateY(18px) scale(.96)}70%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
@@ -513,6 +530,15 @@
       <p class="desc" id="shdesc"></p>
       <dl class="shmeta" id="shmeta"></dl>
       <div class="shcta" id="shcta"></div>
+      <form class="claim" id="claim" hidden novalidate>
+        <div class="claim-title">Claim this piece</div>
+        <label>Your name<input type="text" id="cName" autocomplete="name" placeholder="So we know who to hold it for"></label>
+        <label>Pickup<select id="cWhen"><option>This week</option><option>This weekend</option><option>Flexible</option></select></label>
+        <div class="claim-pay" id="cPay"></div>
+        <label>Anything else? <span class="opt">optional</span><textarea id="cNote" rows="2" placeholder="Questions, or a time that works for you"></textarea></label>
+        <div class="row"><button type="submit" class="btn">Send request</button><button type="button" class="btn ghost" id="cCopy">Copy instead</button></div>
+        <p class="hint">Opens your email app with everything filled in. We'll reply to confirm it's yours.</p>
+      </form>
       <div class="shbar" id="shbar"></div>
       <div class="related" id="shrelated" hidden><div class="rel-title">More like this</div><div class="rel-row" id="shrelrow"></div></div>
     </div>
@@ -625,6 +651,25 @@
   function setSrc(img, src){ var t = thumb(src); img.src = t || src; img.srcset = t ? t + " 600w, " + src + " 1200w" : ""; }
   function priceText(p){ return p==null ? "Ask us" : (p===0 ? "Free" : fmt.format(p)); }
   var PAY = S.payments || {};
+  var ACCEPTED = (PAY.accepted && PAY.accepted.length) ? PAY.accepted : ["Cash", "Venmo"];
+  function claimText(it){
+    var name = $("cName").value.trim(), when = $("cWhen").value, pay = ($("cPay").querySelector("input:checked") || {}).value || "", note = $("cNote").value.trim();
+    var lines = ["Hi! I'd like to claim the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + ".", ""];
+    if (name) lines.push("Name: " + name);
+    lines.push("Pickup: " + when + (c.location ? " in " + c.location : ""));
+    if (pay) lines.push("Paying with: " + pay);
+    if (note) lines.push("", note);
+    lines.push("", itemUrl(it));
+    return { subject: "Claim: " + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
+  }
+  function claimHref(it){ var t = claimText(it); if (c.sms) return "sms:" + c.sms + "?&body=" + encodeURIComponent(t.body); return "mailto:" + c.email + "?subject=" + encodeURIComponent(t.subject) + "&body=" + encodeURIComponent(t.body); }
+  function showClaim(it){
+    var f = $("claim"); f.hidden = false; f.dataset.slug = it._slug;
+    $("cPay").innerHTML = '<span class="lbl">Paying with</span>' + ACCEPTED.map(function(m, i){ return '<label><input type="radio" name="cpay" value="' + esc(m) + '"' + (i === 0 ? " checked" : "") + '>' + esc(m) + '</label>'; }).join("");
+    setTimeout(function(){ $("cName").focus({preventScroll:false}); f.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" }); }, 50);
+  }
+  $("claim").addEventListener("submit", function(e){ e.preventDefault(); if (!cur || !hasContact) return; var href = claimHref(cur); window.location.href = href; toast("Opening your " + (c.sms ? "messages" : "email") + " app…"); });
+  $("cCopy").addEventListener("click", function(){ if (!cur) return; var t = claimText(cur), txt = "To: " + (c.sms || c.email) + "\nSubject: " + t.subject + "\n\n" + t.body; var done = function(){ toast("Request copied. Paste it into any message to " + (c.sms || c.email) + "."); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function(){ prompt("Copy this:", txt); }); else prompt("Copy this:", txt); });
   function payLinks(it){
     var out = [], amt = it.price, note = it.name + " (Carly's Handmade)";
     if (!(amt > 0)) return out;
@@ -688,7 +733,7 @@
       var href = contactHref(it), buy = buyHref(it);
       if (it.sold){ var sb = document.createElement("span"); sb.className="btn"; sb.textContent="Sold"; sb.setAttribute("aria-disabled","true"); act.appendChild(sb); }
       else if (buy){ var ba = document.createElement("a"); ba.className="btn buy"; ba.href=buy; ba.target="_blank"; ba.rel="noopener"; ba.textContent="Buy now"; act.appendChild(ba); }
-      else if (href){ var a = document.createElement("a"); a.className="btn"; a.href=href; a.textContent="I'm interested"; act.appendChild(a); }
+      else if (href){ var a = document.createElement("button"); a.type="button"; a.className="btn"; a.textContent="I'm interested"; a.addEventListener("click", function(){ openSheet(it, shown); showClaim(it); }); act.appendChild(a); }
       var det = document.createElement("button"); det.type="button"; det.className="btn ghost"; det.textContent="Details"; det.addEventListener("click", function(){ openSheet(it, shown); }); act.appendChild(det);
       body.appendChild(act);
       card.appendChild(body);
@@ -721,7 +766,7 @@
     var href = contactHref(it), cta = "";
     var saved = favs.has(it._slug);
     var buy = buyHref(it), pays = it.sold ? [] : payLinks(it);
-    var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<a class="btn" href="' + esc(href) + '">I\'m interested</a>' : "") +
+    var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shclaim">Claim this piece</button>' : "") +
       (buy && href ? '<a class="btn ghost" href="' + esc(href) + '">Ask</a>' : "") +
       '<button type="button" class="btn ghost" id="shfav" aria-pressed="' + saved + '">' + (saved ? "♥ Saved" : "♡ Save") + '</button>' +
       '<button type="button" class="btn ghost" id="shshare">Share</button></div>';
@@ -731,10 +776,13 @@
     }
     if (it.sold) cta = tools + '<p class="hint">This one has found a home. Browse the rest, or ask about a custom piece.</p>';
     else if (buy) cta = tools + '<p class="hint">Secure checkout with card or Apple Pay. ' + (href ? 'Questions? <a href="' + esc(href) + '">Send a message</a>.' : '') + '</p>' + payHtml;
-    else if (href) cta = tools + '<p class="hint">Opens a' + (c.sms ? " text" : "n email") + ' with the item name filled in. Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
+    else if (href) cta = tools + '<div class="accepted">We take ' + ACCEPTED.map(function(m){ return "<span>" + esc(m) + "</span>"; }).join("") + ' at pickup</div><p class="hint">Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
     else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>' + payHtml;
     $("shcta").innerHTML = cta;
-    $("shbar").innerHTML = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<a class="btn" href="' + esc(href) + '">I\'m interested · ' + esc(priceText(it.price)) + '</a>' : "";
+    $("shbar").innerHTML = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shbarclaim">Claim this piece · ' + esc(priceText(it.price)) + '</button>' : "";
+    var sbc = $("shbarclaim"); if (sbc) sbc.addEventListener("click", function(){ showClaim(it); });
+    var sc = $("shclaim"); if (sc) sc.addEventListener("click", function(){ showClaim(it); });
+    var cf = $("claim"); if (cf.dataset.slug !== it._slug){ cf.hidden = true; $("cName").value = ""; $("cNote").value = ""; }
     $("shfav").addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
     $("shshare").addEventListener("click", function(){ shareItem(it); });
     var rel = items.filter(function(x){ return x !== it && !x.sold && (x.category||"") === (it.category||"") }).slice(0, 4);
@@ -796,7 +844,8 @@
 
   // how it works + footer
   if (!hasContact){ $("step1b").textContent = "Pick a piece"; $("step1").textContent = "Contact details are coming soon. Until then, browse and tap any piece for photos and details."; }
-  else { $("step1").textContent = "It opens a" + (c.sms ? " text" : "n email") + " with the item's name filled in. Say hi."; }
+  else { $("step1b").textContent = "Claim a piece"; $("step1").textContent = "Tap \"Claim this piece\", add your name and a pickup time, and it opens a" + (c.sms ? " text" : "n email") + " to us, ready to send."; }
+  if (!S.payment) $("paytext").textContent = ACCEPTED.join(" or ") + " at pickup.";
   var cl = [];
   if (c.sms) cl.push('Text <code>' + esc(c.sms) + '</code>');
   if (c.email) cl.push('email <code>' + esc(c.email) + '</code>');

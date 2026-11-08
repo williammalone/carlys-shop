@@ -21,6 +21,7 @@ window.SHOP = {
   // Payments. Fill any of these and "Pay $X with ..." buttons appear in each item's detail view,
   // prefilled with the price and item name. Leave empty to hide.
   payments: {
+    accepted: ["Cash", "Venmo"],   // shown to buyers and offered as choices on the claim form
     venmo: "",      // Venmo username, e.g. "Carly-Smith-12" (from venmo.com/u/<username>)
     cashapp: "",    // $cashtag without the $, e.g. "carlymakes"
     paypal: "",     // PayPal.Me name, e.g. "carlymakes"

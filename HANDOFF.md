@@ -28,7 +28,7 @@ A simple static website to sell handmade items Carly sent William by text. Carly
 2. **Set the contact.** Fill `contact.sms` (E.164, e.g. `"+13035551234"`) or `contact.email`. The "I'm interested" button is disabled until one is set.
 3. **Check descriptions.** They were written from the photos. Sizes (blanket dimensions, sweater fit, canvas sizes marked "roughly") are estimates; confirm with Carly or remove.
 4. **Mark anything already sold** with `sold: true`.
-5. **Host it.** On github.com: Settings > Pages > Build and deployment > Source: Deploy from a branch, Branch: `main`, folder `/ (root)`. The site then lives at `https://williammalone.github.io/carlys-shop/`. Until then, the claude.ai artifact link is the live copy.
+5. **Hosting** is automatic: `.github/workflows/pages.yml` deploys to GitHub Pages on every push to `main`, at https://williammalone.github.io/carlys-shop/. The claude.ai artifact link is a second copy that must be republished by hand.
 6. Open `index.html` locally to check. The fifth session verified it renders at desktop and phone widths with no broken images or console errors.
 
 ## Open questions for William

@@ -14,7 +14,7 @@ A simple static website to sell handmade items Carly sent William by text. Carly
 
 - `index.html` — single-page storefront, no build step. Redesigned Nov 8 after a UX review, then restyled "cute" at William's request (pastel palette, Fredoka and Nunito, crochet scallop edge, stitched card borders, sticker price tags):  category filter chips, hanging price tags, a detail sheet per item (all photos, full description, contact button; opens from a `#item-slug` link so a single piece can be texted to someone), a "How buying works" section, light and dark themes, 44px tap targets. Art uses `object-fit: contain` so paintings aren't cropped (override per item with `fit: "cover"`). `price: null` shows "Ask us"; `0` shows "Free". The "Hide sold" toggle appears only once something is marked sold. A notice under the tagline explains missing prices or contact and disappears once they're set.
 - **Live preview:** https://claude.ai/artifact/XZAMg6wNMpucLADSY3mBd2 (private to William until shared from the page's Share menu). Republish from the repo's the repo root after edits, or host on GitHub Pages for a public URL.
-- `products.js` — the only file to edit. Sets `title`, `tagline`, `contact`, and the `items` array. Fully populated. **All 26 prices are `null`** and `contact.sms` / `contact.email` are empty, so every card currently shows "Ask" and a disabled "Add contact info in products.js" button.
+- `products.js` — the only file to edit. Sets `title`, `tagline`, `contact`, and the `items` array. Fully populated. Prices were set on Nov 8 from market research (Etsy asking prices for comparable handmade chenille blankets $75–300, granny-square sweaters $80–150, chunky cat beds $35–50, hooded scarves $25–85, beanies $20–55, slippers $19–30; small original paintings by emerging artists $100–300, discounted here for a local hobbyist sale). Total catalog value: about $1,900. William should adjust anything that feels off. **`contact.sms` / `contact.email` are still empty**, so the "I'm interested" button is not yet shown.
 - `images/` — 45 photos, 8.7 MB total. 38 are used by items. The other 7 are prefixed `extra-` and are not products: five balloon-arch photos from an "almost married" party, a man in a Flash mask, and a floral ice bucket. Delete them or leave them.
 - `images/thumbs/` — 600px versions of the product photos, served to cards via `srcset`; the full 1200px files are used in the detail sheet. Regenerate with Pillow (`im.thumbnail((600,600))`) when photos change.
 - `images/logo.svg` — the logo: a pink ball of yarn with cat ears and a heart on the loose strand. Inlined in the masthead and footer of `index.html` and used as the favicon. Edit the SVG file and re-paste if the mark changes.
@@ -24,7 +24,7 @@ A simple static website to sell handmade items Carly sent William by text. Carly
 
 ## Next session: do this
 
-1. **Set prices.** Ask William for Carly's prices, or propose them. Edit each `price: null` in `products.js`.
+1. **Review prices.** They're market-based estimates in `products.js`; confirm with Carly.
 2. **Set the contact.** Fill `contact.sms` (E.164, e.g. `"+13035551234"`) or `contact.email`. The "I'm interested" button is disabled until one is set.
 3. **Check descriptions.** They were written from the photos. Sizes (blanket dimensions, sweater fit, canvas sizes marked "roughly") are estimates; confirm with Carly or remove.
 4. **Mark anything already sold** with `sold: true`.

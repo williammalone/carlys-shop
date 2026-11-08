@@ -16,6 +16,17 @@ window.SHOP = {
   tagline: "Chunky knit blankets, crochet you can wear, beds your cat will steal, and original paintings. All handmade in Colorado.",
   eyebrow: "Handmade · one of each",
   payment: "Cash or Venmo at pickup.",
+  url: "https://williammalone.github.io/carlys-shop/",   // used for share links and previews
+  about: {
+    title: "About Carly",
+    text: "Every piece here was made by hand by Carly in Colorado: chunky chenille blankets knit by the armful, crochet she wears herself first, beds her cat test-drives, and paintings of the animals she loves. Nothing is mass-made and nothing is repeated, so when a piece is gone, it's gone.",
+    image: "images/blanket-navy-chunky-worn.jpg",
+    alt: "Carly wrapped in the navy chunky knit blanket"
+  },
+  custom: {
+    title: "Want something custom?",
+    text: "A blanket in your colors, a pet portrait from a photo, or a card with your words. Carly takes requests."
+  },
   contact: {
     // Buyers tap "I'm interested" to open one of these. Fill in one or both.
     sms: "",        // e.g. "+13035551234"

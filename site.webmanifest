@@ -1,0 +1,12 @@
+{
+  "name": "Carly's Handmade Blankets & Art",
+  "short_name": "Carly's",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#fdf3f7",
+  "theme_color": "#f7b1c9",
+  "icons": [
+    { "src": "images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "images/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

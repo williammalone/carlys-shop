@@ -17,7 +17,7 @@ Four sessions so far (Nov 7, Nov 7, Nov 8, Nov 8) ran in cloud containers and co
 - `shop/README.md` — field reference for `products.js`.
 - `shop/images/` — empty, ready for the resized photos.
 - `shop/tools/export-from-photos.sh` — **run on the Mac, from the repo root.** Drives the Photos app via AppleScript to export an album (default name `Carly blankets`) as JPEG into `shop/tools/export/` (git-ignored), pauses so files can be renamed, then runs `resize-images.py --stub`. `--date 2026-11-06` filters by capture date instead, but texted photos carry Carly's capture date, so the album is more reliable. First run asks for permission to control Photos.
-- `shop/tools/resize-images.py` — resizes a folder of exported JPEGs to 1200px long side, JPEG q80, auto-rotates, strips EXIF/GPS, writes to `shop/images/`. `--stub` prints a `products.js` item per photo to paste in. Needs Pillow (`python3 -m pip install pillow`); already present in cloud containers. Does not read HEIC, so export from Photos as JPEG.
+- `shop/tools/resize-images.py` — resizes a folder of exported JPEGs to 1200px long side, JPEG q80, auto-rotates, strips EXIF/GPS, writes to `shop/images/`. `--stub` prints a `products.js` item per photo to paste in. Needs Pillow (`python3 -m pip install pillow`); already present in cloud containers. Reads HEIC too when pillow-heif is installed (it is in cloud containers after `python3 -m pip install pillow-heif`), so files uploaded straight from Photos work.
 - The "I'm interested" button on each card opens a pre-filled text (if `contact.sms` is set) or email (if `contact.email` is set).
 
 ## Next session: do this

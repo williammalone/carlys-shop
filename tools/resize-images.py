@@ -4,12 +4,12 @@
 Usage:
   python3 shop/tools/resize-images.py <input-dir> [--out shop/images] [--max 1200] [--quality 80] [--stub]
 
-- Reads JPEG/PNG (HEIC is not supported; export from Photos as JPEG).
+- Reads JPEG/PNG, and HEIC/HEIF when pillow-heif is installed (python3 -m pip install pillow-heif).
 - Auto-rotates from EXIF, strips all metadata (incl. GPS), fits the long side to --max px.
 - Writes <out>/<slugified-name>.jpg. Existing files are overwritten.
 - --stub prints one products.js item per image to paste into shop/products.js.
 
-Requires Pillow:  python3 -m pip install pillow
+Requires Pillow:  python3 -m pip install pillow   (plus pillow-heif for HEIC)
 """
 import argparse, json, re, sys
 from pathlib import Path
@@ -20,6 +20,12 @@ except ImportError:
     sys.exit("Pillow is required: python3 -m pip install pillow")
 
 EXTS = {".jpg", ".jpeg", ".png"}
+try:
+    import pillow_heif
+    pillow_heif.register_heif_opener()
+    EXTS |= {".heic", ".heif"}
+except ImportError:
+    pass  # HEIC files will be skipped; install pillow-heif or export as JPEG
 
 def slug(stem: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "-", stem.lower()).strip("-")
@@ -39,7 +45,7 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
     files = sorted(f for f in src.iterdir() if f.suffix.lower() in EXTS)
     if not files:
-        sys.exit(f"No JPEG/PNG files in {src}")
+        sys.exit(f"No JPEG/PNG{'/HEIC' if '.heic' in EXTS else ''} files in {src}")
 
     stubs = []
     for f in files:

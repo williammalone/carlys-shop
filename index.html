@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Carly's Handmade Blankets & Art</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" type="image/svg+xml" href="images/logo.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
 <style>
@@ -53,7 +54,12 @@
   /* woven pastel ribbon */
   .yarn{height:10px;background:linear-gradient(90deg,var(--pink) 0 20%,var(--butter) 20% 40%,var(--mint) 40% 60%,var(--lavender) 60% 80%,var(--sky) 80% 100%)}
 
-  header{padding-block:34px 16px}
+  header{padding-block:30px 16px}
+  .brand{margin:0 0 10px}
+  .logo{width:96px;height:auto;display:block;transform-origin:60% 85%}
+  .logo.small{width:56px;margin:0 auto 8px}
+  @media (max-width:700px){.logo{width:72px}}
+  .fmark{display:flex;justify-content:center}
   .mast{display:grid;grid-template-columns:1fr;gap:22px}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font:700 .85rem/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--heart);margin:0 0 14px;white-space:nowrap}
   .eyebrow svg{width:18px;height:18px}
@@ -218,10 +224,12 @@
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes wiggle{0%,100%{transform:none}25%{transform:rotate(-2deg) scale(1.04)}75%{transform:rotate(2deg) scale(1.04)}}
   .yarn{background-size:200px 100%;animation:drift 14s linear infinite}
-  header .eyebrow,header h1,header .tag,header #pickup,header #notice,header .stats{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
-  header h1{animation-delay:.08s} header .tag{animation-delay:.16s} header #pickup{animation-delay:.24s} header #notice{animation-delay:.3s} header .stats{animation-delay:.36s}
+  header .brand,header .eyebrow,header h1,header .tag,header #pickup,header #notice,header .stats{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+  @keyframes bob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-2px)}}
+  .brand .logo{animation:bob 4s ease-in-out infinite}
+  .brand .logo:hover{animation:wiggle .5s ease-in-out}
+  header .eyebrow{animation-delay:.06s} header h1{animation-delay:.12s} header .tag{animation-delay:.16s} header #pickup{animation-delay:.24s} header #notice{animation-delay:.3s} header .stats{animation-delay:.36s}
   h1 em::after{animation:draw .9s .5s cubic-bezier(.2,.8,.2,1) both}
-  .eyebrow svg{animation:rock 3.2s ease-in-out infinite;transform-origin:50% 60%}
   .stats li{transition:transform .15s} .stats li:hover{transform:translateY(-2px) rotate(-1.5deg)}
   .card{animation:pop .55s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0) * 45ms)}
   .card:hover .pt{animation:swing .9s ease-in-out}
@@ -246,7 +254,8 @@
 <header class="wrap">
   <div class="mast">
     <div>
-      <p class="eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="12" r="8"/><path d="M4.5 9c3 1 6 1 9-1.5M3.6 14c4 1.5 8 .5 11-2.5M8 19.2c2.5-1 5-3 6.5-6M19 12c1.5 2 2.5 5 2.5 8"/></svg><span id="eyebrow">Handmade · one of each</span></p>
+      <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 124" class="logo" aria-hidden="true" focusable="false"><path d="M34 42 L26 8 L58 28 Z" fill="#f7b1c9"/><path d="M38 38 L33 17 L52 30 Z" fill="#dccdf7"/><path d="M86 42 L94 8 L62 28 Z" fill="#f7b1c9"/><path d="M82 38 L87 17 L68 30 Z" fill="#dccdf7"/><circle cx="60" cy="68" r="42" fill="#f7b1c9"/><g fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round" opacity=".5"><path d="M19 86 Q60 68 101 86"/><path d="M25 99 Q60 82 95 99"/><path d="M22 78 Q36 98 52 109"/><path d="M98 78 Q84 98 68 109"/><path d="M44 107 Q60 101 76 107"/></g><path d="M101 72 C 122 70, 128 88, 112 94 C 100 99, 102 108, 112 110" fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round"/><path d="M120 118 L113.6 111.6 A3.8 3.8 0 0 1 120 107 A3.8 3.8 0 0 1 126.4 111.6 Z" fill="#e8608a"/><g fill="none" stroke="#4a3a55" stroke-width="3.6" stroke-linecap="round"><path d="M42 60 Q49 52 56 60"/><path d="M64 60 Q71 52 78 60"/><path d="M60 72 Q55 78 50 74"/><path d="M60 72 Q65 78 70 74"/></g><path d="M60 72 L55 66.5 Q60 62 65 66.5 Z" fill="#e8608a"/><g stroke="#4a3a55" stroke-width="2.4" stroke-linecap="round" opacity=".8"><path d="M30 66 L40 68"/><path d="M30 76 L40 73"/><path d="M90 66 L80 68"/><path d="M90 76 L80 73"/></g><circle cx="40" cy="78" r="5" fill="#ff8fb0" opacity=".55"/><circle cx="80" cy="78" r="5" fill="#ff8fb0" opacity=".55"/></svg></div>
+      <p class="eyebrow"><span id="eyebrow">Handmade · one of each</span></p>
       <h1 id="title">For Sale</h1>
       <p class="tag" id="tagline"></p>
       <div id="pickup"></div>
@@ -287,7 +296,7 @@
   </ol>
   <p class="contactline" id="contactline"></p>
 </section>
-<footer class="wrap" id="footer"></footer>
+<footer class="wrap"><div class="fmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 124" class="logo small" aria-hidden="true" focusable="false"><path d="M34 42 L26 8 L58 28 Z" fill="#f7b1c9"/><path d="M38 38 L33 17 L52 30 Z" fill="#dccdf7"/><path d="M86 42 L94 8 L62 28 Z" fill="#f7b1c9"/><path d="M82 38 L87 17 L68 30 Z" fill="#dccdf7"/><circle cx="60" cy="68" r="42" fill="#f7b1c9"/><g fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round" opacity=".5"><path d="M19 86 Q60 68 101 86"/><path d="M25 99 Q60 82 95 99"/><path d="M22 78 Q36 98 52 109"/><path d="M98 78 Q84 98 68 109"/><path d="M44 107 Q60 101 76 107"/></g><path d="M101 72 C 122 70, 128 88, 112 94 C 100 99, 102 108, 112 110" fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round"/><path d="M120 118 L113.6 111.6 A3.8 3.8 0 0 1 120 107 A3.8 3.8 0 0 1 126.4 111.6 Z" fill="#e8608a"/><g fill="none" stroke="#4a3a55" stroke-width="3.6" stroke-linecap="round"><path d="M42 60 Q49 52 56 60"/><path d="M64 60 Q71 52 78 60"/><path d="M60 72 Q55 78 50 74"/><path d="M60 72 Q65 78 70 74"/></g><path d="M60 72 L55 66.5 Q60 62 65 66.5 Z" fill="#e8608a"/><g stroke="#4a3a55" stroke-width="2.4" stroke-linecap="round" opacity=".8"><path d="M30 66 L40 68"/><path d="M30 76 L40 73"/><path d="M90 66 L80 68"/><path d="M90 76 L80 73"/></g><circle cx="40" cy="78" r="5" fill="#ff8fb0" opacity=".55"/><circle cx="80" cy="78" r="5" fill="#ff8fb0" opacity=".55"/></svg></div><div id="footer"></div></footer>
 
 <dialog class="sheet" id="sheet" aria-labelledby="shname">
   <button class="shx" id="shx" aria-label="Close">×</button>

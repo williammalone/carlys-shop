@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 124" width="132" height="124" role="img" aria-label="Carly's Handmade logo: a ball of yarn with cat ears">
+  <!-- ears -->
+  <path d="M34 42 L26 8 L58 28 Z" fill="#f7b1c9"/>
+  <path d="M38 38 L33 17 L52 30 Z" fill="#dccdf7"/>
+  <path d="M86 42 L94 8 L62 28 Z" fill="#f7b1c9"/>
+  <path d="M82 38 L87 17 L68 30 Z" fill="#dccdf7"/>
+  <!-- ball -->
+  <circle cx="60" cy="68" r="42" fill="#f7b1c9"/>
+  <!-- yarn strands -->
+  <g fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round" opacity=".5">
+    <path d="M19 86 Q60 68 101 86"/>
+    <path d="M25 99 Q60 82 95 99"/>
+    <path d="M22 78 Q36 98 52 109"/>
+    <path d="M98 78 Q84 98 68 109"/>
+    <path d="M44 107 Q60 101 76 107"/>
+  </g>
+  <!-- loose strand with heart -->
+  <path d="M101 72 C 122 70, 128 88, 112 94 C 100 99, 102 108, 112 110" fill="none" stroke="#e8608a" stroke-width="4" stroke-linecap="round"/>
+  <path d="M120 118 L113.6 111.6 A3.8 3.8 0 0 1 120 107 A3.8 3.8 0 0 1 126.4 111.6 Z" fill="#e8608a"/>
+  <!-- face -->
+  <g fill="none" stroke="#4a3a55" stroke-width="3.6" stroke-linecap="round">
+    <path d="M42 60 Q49 52 56 60"/>
+    <path d="M64 60 Q71 52 78 60"/>
+    <path d="M60 72 Q55 78 50 74"/>
+    <path d="M60 72 Q65 78 70 74"/>
+  </g>
+  <path d="M60 72 L55 66.5 Q60 62 65 66.5 Z" fill="#e8608a"/>
+  <g stroke="#4a3a55" stroke-width="2.4" stroke-linecap="round" opacity=".8">
+    <path d="M30 66 L40 68"/><path d="M30 76 L40 73"/>
+    <path d="M90 66 L80 68"/><path d="M90 76 L80 73"/>
+  </g>
+  <!-- blush -->
+  <circle cx="40" cy="78" r="5" fill="#ff8fb0" opacity=".55"/>
+  <circle cx="80" cy="78" r="5" fill="#ff8fb0" opacity=".55"/>
+</svg>

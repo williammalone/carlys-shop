@@ -15,7 +15,7 @@
 window.SHOP = {
   title: "Carly's Handmade Blankets & Art",
   tagline: "Chunky knit blankets, crochet you can wear, beds your cat will steal, and original paintings. All handmade in Colorado.",
-  eyebrow: "Handmade · one of each",
+  eyebrow: "Handmade · one of each · ready for holiday gifting",
   payment: "Cash or Venmo at pickup.",
   url: "https://williammalone.github.io/carlys-shop/",   // used for share links and previews
   // Payments. Fill any of these and "Pay $X with ..." buttons appear in each item's detail view,

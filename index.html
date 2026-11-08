@@ -361,6 +361,16 @@
   .accepted{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:700 .8rem var(--body);color:var(--muted);margin-top:2px}
   .accepted span{background:var(--well);color:var(--ink);border-radius:999px;padding:5px 10px;font-weight:700}
 
+  /* admin mode */
+  .admin{position:sticky;bottom:0;z-index:7;background:var(--ink);color:var(--bg);padding-block:12px;box-shadow:0 -10px 30px rgba(0,0,0,.2)}
+  .admin .wrap{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+  .admin strong{font:600 1rem var(--display);background:var(--mustard);color:var(--accent-ink);padding:4px 10px;border-radius:999px}
+  .admin span{font-size:.88rem;flex:1 1 280px;opacity:.9}
+  .admin .row{display:flex;gap:8px;flex-wrap:wrap}
+  .admin .btn.ghost{background:transparent;color:var(--bg);border-color:rgba(255,255,255,.35);box-shadow:none}
+  .mark{position:absolute;left:12px;bottom:-12px;z-index:3;min-height:36px;padding:8px 12px;border-radius:999px;border:2.5px solid var(--card);background:var(--ink);color:var(--bg);font:700 .78rem var(--body);cursor:pointer}
+  .mark[aria-pressed="true"]{background:var(--sold);color:#fff}
+
   /* motion */
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   @keyframes pop{0%{opacity:0;transform:translateY(18px) scale(.96)}70%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:none}}
@@ -507,6 +517,17 @@
   </ol>
   <p class="contactline" id="contactline"></p>
 </section>
+<div class="admin" id="admin" hidden>
+  <div class="wrap">
+    <strong>Admin</strong>
+    <span id="adminMsg">Tap "Mark sold" on any card, then copy the updated file and paste it over products.js on GitHub.</span>
+    <div class="row">
+      <button type="button" class="btn" id="adminCopy">Copy updated products.js</button>
+      <a class="btn ghost" id="adminEdit" href="https://github.com/williammalone/carlys-shop/edit/main/products.js" target="_blank" rel="noopener">Open products.js on GitHub</a>
+      <button type="button" class="btn ghost" id="adminOff">Exit</button>
+    </div>
+  </div>
+</div>
 <footer class="wrap"><div class="fmark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 164" class="logo small" aria-hidden="true" focusable="false"><defs><clipPath id="ball2"><circle cx="84" cy="106" r="50"/></clipPath><radialGradient id="shade2" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#fcd3df"/><stop offset=".55" stop-color="#f7b1c9"/><stop offset="1" stop-color="#ea93b4"/></radialGradient></defs><g class="tail"><path d="M124 128 C 152 124, 160 96, 142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#cdbdee" stroke-width="12" stroke-linecap="round"/><path d="M142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#f7b1c9" stroke-width="12" stroke-linecap="round"/></g><g class="ear-l"><path d="M50 30 L52 6 Q53 1 58 4 L76 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M56 27 L57 12 L70 20 Z" fill="#f7b1c9"/></g><g class="ear-r"><path d="M118 30 L116 6 Q115 1 110 4 L92 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M112 27 L111 12 L98 20 Z" fill="#f7b1c9"/></g><circle cx="84" cy="40" r="32" fill="#dccdf7"/><g fill="none" stroke="#b9a7e6" stroke-width="4" stroke-linecap="round" opacity=".9"><path d="M84 10 L84 20"/><path d="M74 12 L76 21"/><path d="M94 12 L92 21"/></g><g class="eyes"><circle cx="71" cy="38" r="5.2" fill="#4a3a55"/><circle cx="97" cy="38" r="5.2" fill="#4a3a55"/><circle cx="72.8" cy="36.2" r="1.8" fill="#fff"/><circle cx="98.8" cy="36.2" r="1.8" fill="#fff"/></g><path d="M84 48 L79.8 43.8 Q84 40.6 88.2 43.8 Z" fill="#e8608a"/><g fill="none" stroke="#4a3a55" stroke-width="2.8" stroke-linecap="round"><path d="M84 48 Q80 53 76.5 50"/><path d="M84 48 Q88 53 91.5 50"/></g><g stroke="#4a3a55" stroke-width="2.2" stroke-linecap="round" opacity=".75"><path d="M52 42 L64 44"/><path d="M53 51 L64 48"/><path d="M116 42 L104 44"/><path d="M115 51 L104 48"/></g><circle cx="62" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="106" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="84" cy="106" r="50" fill="url(#shade2)"/><g clip-path="url(#ball2)" fill="none" stroke="#e8608a" stroke-linecap="round" opacity=".4" transform="rotate(-12 84 106)"><path d="M30 96 Q84 70 138 96" stroke-width="5"/><path d="M28 116 Q84 88 140 116" stroke-width="6"/><path d="M34 136 Q84 110 134 136" stroke-width="5"/><path d="M58 62 Q50 110 70 156" stroke-width="5"/><path d="M118 66 Q124 112 104 156" stroke-width="6"/></g><ellipse cx="64" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><ellipse cx="104" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><g fill="#dccdf7"><rect x="52" y="54" width="22" height="14" rx="7"/><rect x="94" y="54" width="22" height="14" rx="7"/></g><g stroke="#b9a7e6" stroke-width="2.4" stroke-linecap="round"><path d="M59 62 L59 66"/><path d="M63 61 L63 66"/><path d="M67 62 L67 66"/><path d="M101 62 L101 66"/><path d="M105 61 L105 66"/><path d="M109 62 L109 66"/></g><path d="M38 130 C 18 134, 8 144, 18 154 C 24 160, 34 158, 40 154" fill="none" stroke="#e8608a" stroke-width="5" stroke-linecap="round"/><path d="M48 160 L40.6 152.6 A4.4 4.4 0 0 1 48 147.2 A4.4 4.4 0 0 1 55.4 152.6 Z" fill="#e8608a"/></svg></div><div id="footer"></div><div class="fctl"><button type="button" class="motion" id="motion" aria-pressed="false">Pause animations</button></div><button class="totop" id="totop" type="button" aria-label="Back to top" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V6M5.5 12.5 12 6l6.5 6.5"/></svg></button>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </footer>
@@ -605,7 +626,7 @@
   function saveFavs(){ try { localStorage.setItem(FAVKEY, JSON.stringify(Array.from(favs))); } catch (e) {} }
   function toggleFav(it){ if (favs.has(it._slug)) favs.delete(it._slug); else favs.add(it._slug); saveFavs(); if (cat === "__saved" && !favs.size) cat = "All"; chips(); render(); if (cur && cur === it) openSheet(it, idx); }
   function matches(it){ if (!q) return true; var hay = (it.name + " " + (it.description||"") + " " + (it.category||"") + " " + (it.condition||"")).toLowerCase(); return q.split(/\s+/).every(function(w){ return hay.indexOf(w) >= 0; }); }
-  function visibleBase(){ return items.filter(function(it){ return !(anySold && $("hideSold").checked && it.sold); }); }
+  function visibleBase(){ return items.filter(function(it){ return admin || !(anySold && $("hideSold").checked && it.sold); }); }
   function chips(){
     var base = visibleBase();
     var h = '<button class="chip" aria-pressed="' + (cat==="All") + '" data-cat="All">All<small>' + base.length + '</small></button>';
@@ -708,6 +729,7 @@
       var pt = document.createElement("span"); pt.className = "pt" + (it.price==null ? " ask" : ""); pt.textContent = priceText(it.price); pt.style.setProperty("--i", grid.children.length); ph.appendChild(pt);
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
       card.appendChild(ph);
+      if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Mark sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk); }
       var fav = document.createElement("button"); fav.type = "button"; fav.className = "fav"; fav.setAttribute("aria-pressed", favs.has(it._slug)); fav.setAttribute("aria-label", favs.has(it._slug) ? "Remove from saved" : "Save this piece");
       fav.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>';
       fav.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(it); heartBurst(e.clientX, e.clientY); });
@@ -892,6 +914,34 @@
     btn.addEventListener("click", function(){ var off = root.getAttribute("data-motion") === "off"; if (off) root.removeAttribute("data-motion"); else root.setAttribute("data-motion", "off"); reduce = !off || matchMedia("(prefers-reduced-motion: reduce)").matches; try { localStorage.setItem("carlys-motion", off ? "on" : "off"); } catch (e) {} sync(); });
     sync();
   })();
+  // structured data so search engines can read the catalog
+  (function(){
+    try {
+      var base = (S.url || (location.origin + location.pathname)).replace(/#.*$/, "");
+      var ld = { "@context": "https://schema.org", "@type": "ItemList", "name": S.title || "Shop", "url": base, "itemListElement": items.map(function(it, i){ return { "@type": "ListItem", "position": i + 1, "item": { "@type": "Product", "name": it.name, "description": it.description || "", "image": it._pics.map(function(p){ return base + p; }), "url": base + "#" + it._slug, "category": it.category || "", "offers": { "@type": "Offer", "priceCurrency": "USD", "price": it.price == null ? undefined : it.price, "availability": it.sold ? "https://schema.org/SoldOut" : "https://schema.org/InStock", "itemCondition": "https://schema.org/NewCondition" } } }; }) };
+      var tag = document.createElement("script"); tag.type = "application/ld+json"; tag.textContent = JSON.stringify(ld); document.head.appendChild(tag);
+    } catch (e) {}
+  })();
+  // offline + instant repeat visits (only on a real host, not when opened from disk)
+  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0 && !/claudeusercontent|claude\.ai/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(function(){});
+  // admin mode: #admin toggles Mark-sold buttons and a copy of the updated products.js
+  var admin = false, soldEdits = {};
+  function setAdmin(on){ admin = on; $("admin").hidden = !on; document.body.classList.toggle("is-admin", on); render(); if (on) toast("Admin mode. Mark pieces sold, then copy the updated file."); }
+  if (location.hash === "#admin"){ history.replaceState(null, "", location.pathname + location.search); setAdmin(true); }
+  var tapCount = 0, tapTimer; document.querySelector(".brand .logo").addEventListener("click", function(){ tapCount++; clearTimeout(tapTimer); tapTimer = setTimeout(function(){ tapCount = 0; }, 1500); if (tapCount >= 5){ tapCount = 0; setAdmin(!admin); } });
+  $("adminOff").addEventListener("click", function(){ setAdmin(false); });
+  $("adminCopy").addEventListener("click", function(){
+    fetch("products.js", { cache: "no-store" }).then(function(r){ return r.text(); }).then(function(src){
+      var out = src, n = 0;
+      items.forEach(function(it){
+        var sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold;
+        var re = new RegExp('(name: "' + it.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '",[\\s\\S]*?sold: )(true|false)');
+        out = out.replace(re, function(m, a, b){ if ((b === "true") !== sold) n++; return a + (sold ? "true" : "false"); });
+      });
+      var done = function(){ toast(n ? "Copied with " + n + " change" + (n > 1 ? "s" : "") + ". Paste over products.js on GitHub and commit." : "Copied. No changes yet, tap Mark sold on a card first."); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(out).then(done, function(){ prompt("Copy this:", out); }); else prompt("Copy this:", out);
+    }).catch(function(){ toast("Couldn't read products.js from this host."); });
+  });
   if (S.about && (S.about.text || S.about.image)){
     $("about").hidden = false;
     if (S.about.title) $("aboutTitle").textContent = S.about.title;

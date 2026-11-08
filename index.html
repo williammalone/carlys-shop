@@ -74,42 +74,38 @@
     linear-gradient(135deg,rgba(255,255,255,.35) 25%,transparent 25% 50%,rgba(255,255,255,.35) 50% 75%,transparent 75%) 0 0/14px 14px;opacity:.9}
   .yarn::after{content:"";position:absolute;top:0;bottom:0;left:-30%;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:sheen 4.5s ease-in-out infinite}
 
-  header{padding-block:30px 16px;position:relative}
+  header{padding-block:22px 10px;position:relative}
+  .brandrow{display:flex;align-items:center;gap:16px}
+  .brandtext{min-width:0}
+  .brandtext .eyebrow{margin:0 0 6px}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+  .meta .pill{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:999px;font:700 .88rem/1 var(--body);color:var(--on-pastel)}
+  .meta .pill svg{width:15px;height:15px;flex:none}
+  .meta .pill.loc{background:var(--mint)} .meta .pill.count{background:var(--lavender)}
+  .meta .btn{min-height:38px;padding:8px 14px;font-size:.88rem;flex:0 0 auto;width:auto}
+  @media (max-width:560px){.meta .btn.ghost{flex:0 0 auto}}
   .floaties{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
   header>.mast{position:relative;z-index:1}
-  .brand{margin:0 0 10px}
-  .logo{width:120px;height:auto;display:block;transform-origin:50% 90%}
+  .brand{margin:0;flex:none}
+  .logo{width:92px;height:auto;display:block;transform-origin:50% 90%}
   .logo.small{width:68px;margin:0 auto 8px}
-  @media (max-width:700px){.logo{width:92px}}
+  @media (max-width:700px){.logo{width:64px}.brandrow{gap:12px}}
   .fmark{display:flex;justify-content:center}
   .mast{display:grid;grid-template-columns:1fr;gap:22px}
   .mast-side{display:contents}
   @media (min-width:960px){
-    .mast{grid-template-columns:minmax(0,1.3fr) minmax(300px,1fr);gap:24px 56px;align-items:end}
+    .mast{grid-template-columns:minmax(0,1.3fr) minmax(300px,1fr);gap:24px 56px;align-items:center}
     .mast-side{display:flex;flex-direction:column;gap:18px;align-items:flex-start}
-    .mast-side .notice,.mast-side .stats{margin-top:0}
   }
   .eyebrow{display:inline-flex;align-items:center;gap:8px;font:700 .85rem/1 var(--body);letter-spacing:.04em;text-transform:uppercase;color:var(--heart-ink);margin:0 0 14px;white-space:nowrap}
   .eyebrow svg{width:18px;height:18px}
-  h1{font:600 clamp(2.2rem,7vw,4.4rem)/1.02 var(--display);letter-spacing:-.01em;margin:0;text-wrap:balance}
+  h1{font:600 clamp(1.7rem,5.2vw,3.4rem)/1.02 var(--display);letter-spacing:-.01em;margin:0;text-wrap:balance}
   h1 em{font-style:normal;display:block;color:var(--heart-ink);position:relative}
   h1 em::after{content:"";display:block;height:.16em;margin-top:.04em;max-width:7.5em;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10' preserveAspectRatio='none'><path d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5' fill='none' stroke='%23ffe28f' stroke-width='3' stroke-linecap='round'/></svg>") 0 0/.9em 100% repeat-x}
   @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) h1 em::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10' preserveAspectRatio='none'><path d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5' fill='none' stroke='%23f6d87e' stroke-width='3' stroke-linecap='round'/></svg>")}}
   :root[data-theme="dark"] h1 em::after{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 10' preserveAspectRatio='none'><path d='M0 5 Q5 0 10 5 T20 5 T30 5 T40 5' fill='none' stroke='%23f6d87e' stroke-width='3' stroke-linecap='round'/></svg>")}
-  .tag{font-size:1.1rem;color:var(--muted);margin:16px 0 0;max-width:46ch;text-wrap:pretty}
-  .stats{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none;max-width:70ch;min-height:88px}
-  .stats b{display:inline-block;min-width:1.4ch;text-align:center}
-  @media (max-width:700px){.stats{min-height:134px}}
-  @media (min-width:960px){.stats{min-height:44px}}
-  .stats li{display:flex;align-items:center;gap:8px;padding:8px 14px 8px 10px;border-radius:999px;font:700 .85rem/1.2 var(--body);color:var(--on-pastel);background:var(--lavender)}
-  .stats li:nth-child(5n+2){background:var(--pink)} .stats li:nth-child(5n+3){background:var(--mint)} .stats li:nth-child(5n+4){background:var(--butter)} .stats li:nth-child(5n+5){background:var(--sky)}
-  .stats b{font:600 1.25rem/1 var(--display);font-variant-numeric:tabular-nums}
-  .stats svg{width:18px;height:18px;flex:none}
-  .pickup{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:10px 16px;border-radius:999px;background:var(--mint);color:var(--on-pastel);font:700 .9rem/1 var(--body)}
-  .pickup svg{width:16px;height:16px;flex:none}
-  .hero-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;max-width:420px}
-  .hero-cta .btn{flex:1 1 160px}
-  header .hero-cta{animation:rise .6s .3s cubic-bezier(.2,.8,.2,1) backwards}
+  .tag{font-size:1rem;color:var(--muted);margin:12px 0 0;max-width:52ch;text-wrap:pretty}
+  @media (max-width:700px){.tag{font-size:.95rem;margin-top:10px}}
   .notice{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px 16px;border-radius:18px;background:var(--card);border:2px dashed var(--pink);color:var(--ink);font-size:.92rem;max-width:60ch}
   .notice svg{width:18px;height:18px;flex:none;margin-top:3px;color:var(--heart)}
 
@@ -321,7 +317,7 @@
   /* hero collage */
   .collage{display:none}
   @media (min-width:960px){
-    .collage{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:520px;margin-bottom:6px}
+    .collage{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:460px;margin-left:auto}
     .collage button{border:0;padding:0;background:var(--card);border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:var(--shadow);aspect-ratio:4/5;position:relative;transition:transform .2s}
     .collage button:nth-child(1){transform:rotate(-4deg) translateY(10px)} .collage button:nth-child(2){transform:rotate(2deg) translateY(-6px)} .collage button:nth-child(3){transform:rotate(-1.5deg) translateY(14px)}
     .collage button:hover{transform:rotate(0) translateY(-4px) scale(1.03);z-index:1}
@@ -403,19 +399,17 @@
   .yarn::before{animation:stitch 1.6s linear infinite}
   @keyframes stitch{from{background-position:0 0}to{background-position:14px 0}}
   @keyframes sheen{0%{left:-30%}60%,100%{left:130%}}
-  header .brand,header .eyebrow,header h1,header .tag,header #pickup,header .notice,header .stats{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
+  header .brandrow,header .tag,header .meta,header .notice{animation:rise .6s cubic-bezier(.2,.8,.2,1) backwards}
   @keyframes bob{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg) translateY(-2px)}}
   .brand .logo{animation:bob 4s ease-in-out infinite}
   .brand .logo:hover{animation:wiggle .5s ease-in-out}
-  header .eyebrow{animation-delay:.06s} header h1{animation-delay:.12s} header .tag{animation-delay:.16s} header #pickup{animation-delay:.24s} header .notice{animation-delay:.3s} header .stats{animation-delay:.36s}
+  header .tag{animation-delay:.1s} header .meta{animation-delay:.18s} header .notice{animation-delay:.24s}
   h1 em::after{animation:draw .9s .5s cubic-bezier(.2,.8,.2,1) both}
-  .stats li{transition:transform .15s} .stats li:hover{transform:translateY(-2px) rotate(-1.5deg)}
   .card{animation:pop .55s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0) * 45ms)}
   .card:hover .pt{animation:swing .9s ease-in-out}
   .card:hover .pt::before{animation:beat .9s ease-in-out}
   .chip{transition:transform .18s cubic-bezier(.3,1.6,.5,1),box-shadow .15s,background .15s}
   .chip[aria-pressed="true"]{animation:wiggle .35s ease-in-out}
-  .pickup{transition:transform .15s} .pickup:hover{transform:translateY(-2px)}
   dialog.sheet[open]{animation:sheetIn .38s cubic-bezier(.2,.9,.3,1.1)}
   dialog.sheet[open]::backdrop{animation:fadeIn .3s ease}
   .shmain img,.ph img{transition:opacity .25s ease,transform .5s ease}
@@ -443,7 +437,7 @@
   .fl1{left:58%;top:12%;color:var(--pink)} .fl2{left:70%;top:48%;color:var(--lavender);width:34px;height:34px;animation-duration:12s;animation-delay:-3s}
   .fl3{left:84%;top:22%;color:var(--butter);width:20px;height:20px;animation-duration:8s;animation-delay:-5s} .fl4{left:92%;top:62%;color:var(--mint);width:30px;height:30px;animation-duration:11s;animation-delay:-7s}
   .fl5{left:63%;top:78%;color:var(--sky);width:18px;height:18px;animation-duration:10s;animation-delay:-2s}
-  @media (max-width:960px){.fl1,.fl2,.fl5{display:none}.fl3{left:82%;top:3%}.fl4{left:88%;top:70%;opacity:.4}}
+  @media (max-width:960px){.fl1,.fl2,.fl4,.fl5{display:none}.fl3{left:84%;top:6%;opacity:.5}}
   .pt{animation:sway 4s ease-in-out infinite;animation-delay:calc(var(--i,0) * -.7s)}
   .pt::before{animation:beatSlow 2.6s ease-in-out infinite;animation-delay:calc(var(--i,0) * -.4s)}
   .card:hover .pt{animation:swing .9s ease-in-out}
@@ -475,18 +469,20 @@
     <svg class="fl fl5" viewBox="0 0 24 24"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z"/></svg>
   </div>
   <div class="mast">
-    <div>
-      <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 164" class="logo" aria-hidden="true" focusable="false"><defs><clipPath id="ball"><circle cx="84" cy="106" r="50"/></clipPath><radialGradient id="shade" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#fcd3df"/><stop offset=".55" stop-color="#f7b1c9"/><stop offset="1" stop-color="#ea93b4"/></radialGradient></defs><g class="tail"><path d="M124 128 C 152 124, 160 96, 142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#cdbdee" stroke-width="12" stroke-linecap="round"/><path d="M142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#f7b1c9" stroke-width="12" stroke-linecap="round"/></g><g class="ear-l"><path d="M50 30 L52 6 Q53 1 58 4 L76 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M56 27 L57 12 L70 20 Z" fill="#f7b1c9"/></g><g class="ear-r"><path d="M118 30 L116 6 Q115 1 110 4 L92 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M112 27 L111 12 L98 20 Z" fill="#f7b1c9"/></g><circle cx="84" cy="40" r="32" fill="#dccdf7"/><g fill="none" stroke="#b9a7e6" stroke-width="4" stroke-linecap="round" opacity=".9"><path d="M84 10 L84 20"/><path d="M74 12 L76 21"/><path d="M94 12 L92 21"/></g><g class="eyes"><circle cx="71" cy="38" r="5.2" fill="#4a3a55"/><circle cx="97" cy="38" r="5.2" fill="#4a3a55"/><circle cx="72.8" cy="36.2" r="1.8" fill="#fff"/><circle cx="98.8" cy="36.2" r="1.8" fill="#fff"/></g><path d="M84 48 L79.8 43.8 Q84 40.6 88.2 43.8 Z" fill="#e8608a"/><g fill="none" stroke="#4a3a55" stroke-width="2.8" stroke-linecap="round"><path d="M84 48 Q80 53 76.5 50"/><path d="M84 48 Q88 53 91.5 50"/></g><g stroke="#4a3a55" stroke-width="2.2" stroke-linecap="round" opacity=".75"><path d="M52 42 L64 44"/><path d="M53 51 L64 48"/><path d="M116 42 L104 44"/><path d="M115 51 L104 48"/></g><circle cx="62" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="106" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="84" cy="106" r="50" fill="url(#shade)"/><g clip-path="url(#ball)" fill="none" stroke="#e8608a" stroke-linecap="round" opacity=".4" transform="rotate(-12 84 106)"><path d="M30 96 Q84 70 138 96" stroke-width="5"/><path d="M28 116 Q84 88 140 116" stroke-width="6"/><path d="M34 136 Q84 110 134 136" stroke-width="5"/><path d="M58 62 Q50 110 70 156" stroke-width="5"/><path d="M118 66 Q124 112 104 156" stroke-width="6"/></g><ellipse cx="64" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><ellipse cx="104" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><g fill="#dccdf7"><rect x="52" y="54" width="22" height="14" rx="7"/><rect x="94" y="54" width="22" height="14" rx="7"/></g><g stroke="#b9a7e6" stroke-width="2.4" stroke-linecap="round"><path d="M59 62 L59 66"/><path d="M63 61 L63 66"/><path d="M67 62 L67 66"/><path d="M101 62 L101 66"/><path d="M105 61 L105 66"/><path d="M109 62 L109 66"/></g><path d="M38 130 C 18 134, 8 144, 18 154 C 24 160, 34 158, 40 154" fill="none" stroke="#e8608a" stroke-width="5" stroke-linecap="round"/><path d="M48 160 L40.6 152.6 A4.4 4.4 0 0 1 48 147.2 A4.4 4.4 0 0 1 55.4 152.6 Z" fill="#e8608a"/></svg></div>
-      <p class="eyebrow"><span id="eyebrow">Handmade · one of each</span></p>
-      <h1 id="title">For Sale</h1>
+    <div class="mast-main">
+      <div class="brandrow">
+        <div class="brand"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 164" class="logo" aria-hidden="true" focusable="false"><defs><clipPath id="ball"><circle cx="84" cy="106" r="50"/></clipPath><radialGradient id="shade" cx="38%" cy="30%" r="80%"><stop offset="0" stop-color="#fcd3df"/><stop offset=".55" stop-color="#f7b1c9"/><stop offset="1" stop-color="#ea93b4"/></radialGradient></defs><g class="tail"><path d="M124 128 C 152 124, 160 96, 142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#cdbdee" stroke-width="12" stroke-linecap="round"/><path d="M142 86 C 134 82, 128 90, 134 96" fill="none" stroke="#f7b1c9" stroke-width="12" stroke-linecap="round"/></g><g class="ear-l"><path d="M50 30 L52 6 Q53 1 58 4 L76 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M56 27 L57 12 L70 20 Z" fill="#f7b1c9"/></g><g class="ear-r"><path d="M118 30 L116 6 Q115 1 110 4 L92 16 Z" fill="#cdbdee" stroke="#cdbdee" stroke-width="6" stroke-linejoin="round"/><path d="M112 27 L111 12 L98 20 Z" fill="#f7b1c9"/></g><circle cx="84" cy="40" r="32" fill="#dccdf7"/><g fill="none" stroke="#b9a7e6" stroke-width="4" stroke-linecap="round" opacity=".9"><path d="M84 10 L84 20"/><path d="M74 12 L76 21"/><path d="M94 12 L92 21"/></g><g class="eyes"><circle cx="71" cy="38" r="5.2" fill="#4a3a55"/><circle cx="97" cy="38" r="5.2" fill="#4a3a55"/><circle cx="72.8" cy="36.2" r="1.8" fill="#fff"/><circle cx="98.8" cy="36.2" r="1.8" fill="#fff"/></g><path d="M84 48 L79.8 43.8 Q84 40.6 88.2 43.8 Z" fill="#e8608a"/><g fill="none" stroke="#4a3a55" stroke-width="2.8" stroke-linecap="round"><path d="M84 48 Q80 53 76.5 50"/><path d="M84 48 Q88 53 91.5 50"/></g><g stroke="#4a3a55" stroke-width="2.2" stroke-linecap="round" opacity=".75"><path d="M52 42 L64 44"/><path d="M53 51 L64 48"/><path d="M116 42 L104 44"/><path d="M115 51 L104 48"/></g><circle cx="62" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="106" cy="48" r="5" fill="#ff9dbd" opacity=".55"/><circle cx="84" cy="106" r="50" fill="url(#shade)"/><g clip-path="url(#ball)" fill="none" stroke="#e8608a" stroke-linecap="round" opacity=".4" transform="rotate(-12 84 106)"><path d="M30 96 Q84 70 138 96" stroke-width="5"/><path d="M28 116 Q84 88 140 116" stroke-width="6"/><path d="M34 136 Q84 110 134 136" stroke-width="5"/><path d="M58 62 Q50 110 70 156" stroke-width="5"/><path d="M118 66 Q124 112 104 156" stroke-width="6"/></g><ellipse cx="64" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><ellipse cx="104" cy="66" rx="12" ry="5" fill="#ea93b4" opacity=".45"/><g fill="#dccdf7"><rect x="52" y="54" width="22" height="14" rx="7"/><rect x="94" y="54" width="22" height="14" rx="7"/></g><g stroke="#b9a7e6" stroke-width="2.4" stroke-linecap="round"><path d="M59 62 L59 66"/><path d="M63 61 L63 66"/><path d="M67 62 L67 66"/><path d="M101 62 L101 66"/><path d="M105 61 L105 66"/><path d="M109 62 L109 66"/></g><path d="M38 130 C 18 134, 8 144, 18 154 C 24 160, 34 158, 40 154" fill="none" stroke="#e8608a" stroke-width="5" stroke-linecap="round"/><path d="M48 160 L40.6 152.6 A4.4 4.4 0 0 1 48 147.2 A4.4 4.4 0 0 1 55.4 152.6 Z" fill="#e8608a"/></svg></div>
+        <div class="brandtext">
+          <p class="eyebrow"><span id="eyebrow">Handmade · one of each</span></p>
+          <h1 id="title">For Sale</h1>
+        </div>
+      </div>
       <p class="tag" id="tagline"></p>
-      <div id="pickup"></div>
-      <div class="hero-cta"><a class="btn" href="#grid" id="browseBtn">See all the pieces</a><button type="button" class="btn ghost" id="shareShop">Share the shop</button></div>
+      <div class="meta" id="meta"></div>
+      <div id="notice" hidden></div>
     </div>
     <div class="mast-side">
       <div class="collage" id="collage" aria-label="A few of Carly's pieces"></div>
-      <div id="notice" hidden></div>
-      <ul class="stats" id="stats"></ul>
     </div>
   </div>
 </header>
@@ -612,7 +608,10 @@
   $("title").innerHTML = m ? esc(m[1]) + "<em>" + esc(m[2].trim()) + "</em>" : esc(t);
   $("tagline").textContent = S.tagline || "";
   if (S.eyebrow) $("eyebrow").textContent = S.eyebrow;
-  if (c.location) $("pickup").innerHTML = '<span class="pickup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Local pickup in ' + esc(c.location) + '</span>';
+  var avail0 = items.filter(function(it){ return !it.sold; }).length;
+  $("meta").innerHTML = (c.location ? '<span class="pill loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Local pickup in ' + esc(c.location) + '</span>' : "") +
+    '<span class="pill count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>' + avail0 + ' pieces</span>' +
+    '<button type="button" class="btn ghost" id="shareShop">Share</button>';
   if (anyAsk || !hasContact){
     $("notice").hidden = false;
     $("notice").className = "notice";
@@ -625,17 +624,6 @@
   var cats = [];
   items.forEach(function(it){ var k = it.category || "Other"; if (cats.indexOf(k) < 0) cats.push(k); });
   var avail = items.filter(function(it){ return !it.sold; });
-  var icons = {
-    "_all": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>',
-    "Blankets": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H4zM4 16c0 2 1.5 3 3 3h10c1.5 0 3-1 3-3M8 6v10M12 6v10M16 6v10"/></svg>',
-    "Wearables": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 4 7l2 4 2-1v10h8V10l2 1 2-4-5-3a3 3 0 0 1-6 0z"/></svg>',
-    "Home & Cats": '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="7" cy="9" r="2.2"/><circle cx="12" cy="6.5" r="2.2"/><circle cx="17" cy="9" r="2.2"/><path d="M12 11c-3.5 0-6.5 2.8-6.5 5.5 0 1.6 1.2 2.5 2.7 2.5 1.3 0 2.3-.9 3.8-.9s2.5.9 3.8.9c1.5 0 2.7-.9 2.7-2.5C18.5 13.8 15.5 11 12 11z"/></svg>',
-    "Art": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7.5" r="1.2" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.2" fill="currentColor"/></svg>',
-    "Cards": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="m3.5 8 8.5 6 8.5-6"/></svg>'
-  };
-  var statHtml = '<li>' + icons._all + '<span><b>' + avail.length + '</b> pieces</span></li>';
-  cats.forEach(function(k){ var n = avail.filter(function(it){ return (it.category||"Other")===k; }).length; if (n) statHtml += '<li>' + (icons[k] || "") + '<span><b>' + n + '</b> ' + esc(k.toLowerCase()) + '</span></li>'; });
-  $("stats").innerHTML = statHtml;
   $("soldWrap").hidden = !anySold;
 
   // chips
@@ -973,7 +961,6 @@
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(out).then(done, function(){ prompt("Copy this:", out); }); else prompt("Copy this:", out);
     }).catch(function(){ toast("Couldn't read products.js from this host."); });
   });
-  $("browseBtn").addEventListener("click", function(e){ e.preventDefault(); document.getElementById("grid").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); });
   $("shareShop").addEventListener("click", function(){
     var url = (S.url || (location.origin + location.pathname)).replace(/#.*$/, ""), title = S.title || "Shop";
     if (navigator.share){ navigator.share({ title: title, text: S.tagline || "", url: url }).catch(function(){}); return; }
@@ -989,11 +976,6 @@
   $("hideSold").addEventListener("change", function(){ chips(); render(); });
   chips(); render(); openFromHash();
   if (!reduce){
-    Array.prototype.forEach.call(document.querySelectorAll(".stats b"), function(b){
-      var end = parseInt(b.textContent, 10); if (!end) return; var t0 = null;
-      function tick(ts){ if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / 900); k = 1 - Math.pow(1 - k, 3); b.textContent = Math.round(end * k); if (k < 1) requestAnimationFrame(tick); }
-      b.textContent = "0"; requestAnimationFrame(tick);
-    });
     var steps = document.querySelector(".steps");
     if ("IntersectionObserver" in window && steps){ var io = new IntersectionObserver(function(en){ en.forEach(function(x){ if (x.isIntersecting){ steps.classList.add("seen"); io.disconnect(); } }); }, {threshold:.2}); io.observe(steps); }
     else if (steps) steps.classList.add("seen");

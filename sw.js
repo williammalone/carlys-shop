@@ -1,8 +1,8 @@
 // Service worker: instant repeat visits and offline browsing.
 // Photos and fonts are cached as they're seen; the catalog (products.js) and the page
 // are fetched fresh when online and fall back to the cached copy when not.
-const VERSION = "v2";
-const SHELL = ["./", "./index.html", "./products.js", "./images/logo.svg", "./site.webmanifest"];
+const VERSION = "v3";
+const SHELL = ["./", "./index.html", "./products.js", "./lqip.js", "./images/logo.svg", "./site.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", e => {

@@ -24,6 +24,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - name: Build item preview pages and placeholders
+        run: pip install -q pillow && node tools/build.js
       - name: Leave out files the site does not need
         run: rm -rf tools HANDOFF.md README.md images/README.md images/logo-preview.png images/extra-*.jpg .github
       - uses: actions/configure-pages@v5

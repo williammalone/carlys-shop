@@ -117,7 +117,7 @@ window.SHOP = {
       category: "Wearables",
       price: 28,
       condition: "New, handmade",
-      description: "Thick grey crochet house slippers with a ribbed top. Women's medium.",
+      description: "Thick grey crochet house slippers with a ribbed top. Fits about a women's medium.",
       image: "images/slippers-grey-crochet.jpg",
       sold: false
     },

@@ -135,6 +135,9 @@
   .chip[data-cat="Cards"][aria-pressed="true"]{background:var(--pink)}
   .chip[aria-pressed="true"]:not([data-cat="All"]):not([data-cat="Blankets"]):not([data-cat="Wearables"]):not([data-cat="Home & Cats"]):not([data-cat="Art"]):not([data-cat="Cards"]){background:var(--lavender)}
   .chip small{font-weight:600;margin-left:5px}
+  .chip{display:inline-flex;align-items:center;gap:6px}
+  .chip svg{width:16px;height:16px;flex:none;opacity:.8}
+  .chip[aria-pressed="true"] svg{opacity:1}
   .ctrl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;color:var(--ink);font-size:.92rem}
   .ctrl label{display:flex;align-items:center;gap:8px;min-height:44px;font-weight:700}
   .sel{position:relative;display:inline-flex;align-items:center}
@@ -637,12 +640,20 @@
   function toggleFav(it){ if (favs.has(it._slug)) favs.delete(it._slug); else favs.add(it._slug); saveFavs(); if (cat === "__saved" && !favs.size) cat = "All"; chips(); render(); if (cur && cur === it) openSheet(it, idx); }
   function matches(it){ if (!q) return true; var hay = (it.name + " " + (it.description||"") + " " + (it.category||"") + " " + (it.condition||"")).toLowerCase(); return q.split(/\s+/).every(function(w){ return hay.indexOf(w) >= 0; }); }
   function visibleBase(){ return items.filter(function(it){ return admin || !(anySold && $("hideSold").checked && it.sold); }); }
+  var CHIPICON = {
+    "All": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>',
+    "Blankets": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H4zM4 16c0 2 1.5 3 3 3h10c1.5 0 3-1 3-3M8 6v10M12 6v10M16 6v10"/></svg>',
+    "Wearables": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 4 7l2 4 2-1v10h8V10l2 1 2-4-5-3a3 3 0 0 1-6 0z"/></svg>',
+    "Home & Cats": '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="7" cy="9" r="2.2"/><circle cx="12" cy="6.5" r="2.2"/><circle cx="17" cy="9" r="2.2"/><path d="M12 11c-3.5 0-6.5 2.8-6.5 5.5 0 1.6 1.2 2.5 2.7 2.5 1.3 0 2.3-.9 3.8-.9s2.5.9 3.8.9c1.5 0 2.7-.9 2.7-2.5C18.5 13.8 15.5 11 12 11z"/></svg>',
+    "Art": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10" cy="7.5" r="1.2" fill="currentColor"/><circle cx="14.5" cy="7.5" r="1.2" fill="currentColor"/></svg>',
+    "Cards": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="m3.5 8 8.5 6 8.5-6"/></svg>'
+  };
   function chips(){
     var base = visibleBase();
-    var h = '<button class="chip" aria-pressed="' + (cat==="All") + '" data-cat="All">All<small>' + base.length + '</small></button>';
+    var h = '<button class="chip" aria-pressed="' + (cat==="All") + '" data-cat="All">' + CHIPICON.All + 'All<small>' + base.length + '</small></button>';
     cats.forEach(function(k){
       var n = base.filter(function(it){ return (it.category||"Other")===k; }).length;
-      h += '<button class="chip" aria-pressed="' + (cat===k) + '" data-cat="' + esc(k) + '">' + esc(k) + '<small>' + n + '</small></button>';
+      h += '<button class="chip" aria-pressed="' + (cat===k) + '" data-cat="' + esc(k) + '">' + (CHIPICON[k] || "") + esc(k) + '<small>' + n + '</small></button>';
     });
     if (favs.size) h += '<button class="chip" aria-pressed="' + (cat==="__saved") + '" data-cat="__saved"><span class="hv" aria-hidden="true"></span>Saved<small>' + base.filter(function(it){ return favs.has(it._slug); }).length + '</small></button>';
     if (anySold) h += '<button class="chip" aria-pressed="' + (cat==="__sold") + '" data-cat="__sold">Sold<small>' + items.filter(function(it){ return it.sold; }).length + '</small></button>';
@@ -748,6 +759,10 @@
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
       card.appendChild(ph);
       if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Mark sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk); }
+      if (it._pics.length > 1 && im && matchMedia("(hover:hover)").matches){
+        var peekTimer; card.addEventListener("mouseenter", function(){ peekTimer = setTimeout(function(){ if (shown === 0) swapImg(im, it._pics[1]); }, 450); });
+        card.addEventListener("mouseleave", function(){ clearTimeout(peekTimer); if (shown === 0) swapImg(im, it._pics[0]); });
+      }
       var fav = document.createElement("button"); fav.type = "button"; fav.className = "fav"; fav.setAttribute("aria-pressed", favs.has(it._slug)); fav.setAttribute("aria-label", favs.has(it._slug) ? "Remove from saved" : "Save this piece");
       fav.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>';
       fav.addEventListener("click", function(e){ e.stopPropagation(); toggleFav(it); heartBurst(e.clientX, e.clientY); });
@@ -843,9 +858,11 @@
     });
     $("shprev").hidden = $("shnext").hidden = it._pics.length < 2;
     showPic();
+    var wasOpen = sheet.open;
     if (typeof sheet.showModal === "function" && !sheet.open) sheet.showModal();
     $("shname").focus({preventScroll:true});
-    if (location.hash !== "#" + it._slug) history.replaceState(null, "", "#" + it._slug);
+    if (location.hash !== "#" + it._slug){ if (wasOpen || (history.state && history.state.sheet)) history.replaceState({sheet:true}, "", "#" + it._slug); else history.pushState({sheet:true}, "", "#" + it._slug); }
+    else if (!(history.state && history.state.sheet)) history.replaceState({sheet:true}, "", "#" + it._slug);
   }
   function swapImg(img, src){
     var card = img.closest(".ph"); // card images keep their srcset; sheet image is full size only
@@ -864,7 +881,9 @@
   $("shnext").addEventListener("click", function(){ step(1); });
   $("shx").addEventListener("click", function(){ sheet.close(); });
   sheet.addEventListener("click", function(e){ if (e.target === sheet) sheet.close(); });
-  sheet.addEventListener("close", function(){ cur = null; var cs = catSlug(cat); history.replaceState(null, "", location.pathname + location.search + (cs ? "#" + cs : "")); });
+  var fromPop = false;
+  sheet.addEventListener("close", function(){ cur = null; if (fromPop) return; if (history.state && history.state.sheet){ history.back(); return; } var cs = catSlug(cat); history.replaceState(null, "", location.pathname + location.search + (cs ? "#" + cs : "")); });
+  window.addEventListener("popstate", function(){ if (sheet.open){ fromPop = true; sheet.close(); fromPop = false; } if (!(history.state && history.state.sheet)){ var h = location.hash.replace(/^#/, ""); var k = h ? catFromSlug(h) : null; if (k !== null && k !== cat){ cat = k; chips(); render(); } else if (!h && cat !== "All"){ cat = "All"; chips(); render(); } } openFromHash(); });
   document.addEventListener("keydown", function(e){ if(!sheet.open) return; if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1); });
   var sx = null;
   $("shimg").addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; }, {passive:true});
@@ -880,7 +899,6 @@
   var toastTimer;
   function toast(msg){ var t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 2600); }
   function openFromHash(){ var h = location.hash.replace(/^#/,""); if (!h) return; var it = items.filter(function(x){ return x._slug === h; })[0]; if (it){ openSheet(it, 0); return; } var k = catFromSlug(h); if (k){ cat = k; chips(); render(); } }
-  window.addEventListener("hashchange", openFromHash);
 
   // how it works + footer
   if (!hasContact){ $("step1b").textContent = "Pick a piece"; $("step1").textContent = "Contact details are coming soon. Until then, browse and tap any piece for photos and details."; }

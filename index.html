@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@600;700&display=swap"></noscript>
-<link rel="stylesheet" href="styles.css?v=8074ec3823">
+<link rel="stylesheet" href="styles.css?v=a3734aec0a">
 </head>
 <body>
 <a class="skip" href="#grid">Skip to the items</a><span id="top"></span>
@@ -79,10 +79,11 @@
 <main class="wrap">
   <section class="picks" id="picks" aria-labelledby="picksTitle">
     <div class="picks-head">
-      <img class="picks-cat" src="images/logo.svg" alt="" width="72" height="70">
+      <span class="picks-catwrap"><img class="picks-cat" src="images/logo.svg" alt="" width="72" height="70"><i class="fh fh1" aria-hidden="true">♥</i><i class="fh fh2" aria-hidden="true">♥</i><i class="fh fh3" aria-hidden="true">♥</i></span>
       <div><h2 class="hand" id="picksTitle">Carly's picks</h2><p id="picksSub">Three favorites right now</p></div>
     </div>
-    <div class="shelf" id="shelf"><!-- shelf:start --><button type="button" class="polaroid" data-slug="navy-chunky-knit-blanket" style="--r:-4deg;--k:0"><span class="tape" aria-hidden="true"></span><span class="pframe"><img alt="" loading="eager" decoding="async" fetchpriority="high" src="images/thumbs/blanket-navy-chunky-worn.jpg" srcset="images/small/blanket-navy-chunky-worn.jpg 360w, images/thumbs/blanket-navy-chunky-worn.jpg 600w, images/blanket-navy-chunky-worn.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Navy chunky knit blanket</span><small>big enough to wear</small></span><span class="psticker">$140</span></button><button type="button" class="polaroid" data-slug="granny-square-hooded-scarf" style="--r:2.5deg;--k:1"><span class="tape" aria-hidden="true"></span><span class="pframe"><img alt="" loading="eager" decoding="async" src="images/thumbs/scarf-granny-square-worn.jpg" srcset="images/small/scarf-granny-square-worn.jpg 360w, images/thumbs/scarf-granny-square-worn.jpg 600w, images/scarf-granny-square-worn.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Granny-square hooded scarf</span><small>the hood is built in</small></span><span class="psticker">$55</span></button><button type="button" class="polaroid" data-slug="rainbow-cat-acrylic-on-canvas" style="--r:-1.5deg;--k:2"><span class="tape" aria-hidden="true"></span><span class="pframe contain"><img alt="" loading="eager" decoding="async" src="images/thumbs/painting-rainbow-cat.jpg" srcset="images/small/painting-rainbow-cat.jpg 360w, images/thumbs/painting-rainbow-cat.jpg 600w, images/painting-rainbow-cat.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Rainbow cat, acrylic on canvas</span><small>18 x 24, ready to hang</small></span><span class="psticker">$150</span></button><!-- shelf:end --></div>
+    <span class="xo hand" aria-hidden="true">xo, Carly</span>
+    <div class="shelf" id="shelf"><!-- shelf:start --><button type="button" class="polaroid" data-slug="navy-chunky-knit-blanket" style="--r:-4deg;--k:0"><span class="tape t0" aria-hidden="true"></span><span class="pframe"><img alt="" loading="eager" decoding="async" fetchpriority="high" src="images/thumbs/blanket-navy-chunky-worn.jpg" srcset="images/small/blanket-navy-chunky-worn.jpg 360w, images/thumbs/blanket-navy-chunky-worn.jpg 600w, images/blanket-navy-chunky-worn.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Navy chunky knit blanket <i class="doodle" aria-hidden="true">♡</i></span><small>big enough to wear</small></span><span class="psticker"><span>$140</span></span></button><button type="button" class="polaroid" data-slug="granny-square-hooded-scarf" style="--r:2.5deg;--k:1"><span class="tape t1" aria-hidden="true"></span><span class="pframe"><img alt="" loading="eager" decoding="async" src="images/thumbs/scarf-granny-square-worn.jpg" srcset="images/small/scarf-granny-square-worn.jpg 360w, images/thumbs/scarf-granny-square-worn.jpg 600w, images/scarf-granny-square-worn.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Granny-square hooded scarf <i class="doodle" aria-hidden="true">♡</i></span><small>the hood is built in</small></span><span class="psticker"><span>$55</span></span></button><button type="button" class="polaroid" data-slug="rainbow-cat-acrylic-on-canvas" style="--r:-1.5deg;--k:2"><span class="tape t2" aria-hidden="true"></span><span class="pframe contain"><img alt="" loading="eager" decoding="async" src="images/thumbs/painting-rainbow-cat.jpg" srcset="images/small/painting-rainbow-cat.jpg 360w, images/thumbs/painting-rainbow-cat.jpg 600w, images/painting-rainbow-cat.jpg 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">Rainbow cat, acrylic on canvas <i class="doodle" aria-hidden="true">♡</i></span><small>18 x 24, ready to hang</small></span><span class="psticker"><span>$150</span></span></button><!-- shelf:end --></div>
   </section>
   <p class="results" id="results" aria-live="polite"></p>
   <div class="savedbar" id="savedBar" hidden></div>
@@ -177,8 +178,8 @@
   </div>
 </dialog>
 
-<script src="products.js?v=8074ec3823"></script>
-<script src="lqip.js?v=8074ec3823"></script>
-<script src="app.js?v=8074ec3823"></script>
+<script src="products.js?v=a3734aec0a"></script>
+<script src="lqip.js?v=a3734aec0a"></script>
+<script src="app.js?v=a3734aec0a"></script>
 </body>
 </html>

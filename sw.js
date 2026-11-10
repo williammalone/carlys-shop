@@ -2,7 +2,7 @@
 // VERSION is stamped by tools/build.js from a hash of the site's own files, so every deploy
 // gets a fresh cache and old ones are deleted. Pages, styles, scripts and data are fetched
 // from the network first (cache as fallback); photos and fonts are cache-first.
-const VERSION = "8074ec3823";
+const VERSION = "a3734aec0a";
 const SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./products.js", "./lqip.js", "./images/logo.svg", "./site.webmanifest"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => { e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== VERSION).map(k => caches.delete(k)))).then(() => self.clients.claim())); });

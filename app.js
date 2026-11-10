@@ -244,7 +244,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
     var shelf = $("shelf");
     var existing = shelf.querySelectorAll(".polaroid[data-slug]");
     if (existing.length && existing.length === picks.length && Array.prototype.every.call(existing, function(el, k){ return el.getAttribute("data-slug") === picks[k]._slug; })){
-      if (!shelf.dataset.bound){ shelf.dataset.bound = "1"; Array.prototype.forEach.call(existing, function(el, k){ el.addEventListener("click", function(){ openSheet(picks[k], 0); }); var lq = (window.LQIP || {})[picks[k]._pics[0]]; if (lq) el.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }); }
+      if (!shelf.dataset.bound){ shelf.dataset.bound = "1"; Array.prototype.forEach.call(existing, function(el, k){ el.addEventListener("click", function(){ openSheet(picks[k], 0); }); if (matchMedia("(hover:hover)").matches) el.addEventListener("mouseenter", function(){ var r = el.getBoundingClientRect(); heartBurst(r.right - 24, r.top + 24); }); var lq = (window.LQIP || {})[picks[k]._pics[0]]; if (lq) el.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }); }
       return;
     }
     shelf.innerHTML = "";
@@ -252,9 +252,10 @@ requestAnimationFrame(function(){ setTimeout(function(){
     picks.forEach(function(it, k){
       var b = document.createElement("button"); b.type = "button"; b.className = "polaroid"; b.style.setProperty("--r", rots[k % rots.length] + "deg"); b.style.setProperty("--k", k);
       var src = it._pics[0] || "";
-      b.innerHTML = '<span class="tape" aria-hidden="true"></span><span class="pframe' + (it._fit === "contain" ? " contain" : "") + '"><img alt="" loading="eager" decoding="async"></span><span class="pcap"><span class="hand">' + esc(it.name) + '</span>' + (it.pickNote ? '<small>' + esc(it.pickNote) + '</small>' : '') + '</span><span class="psticker">' + esc(priceText(it.price)) + '</span>';
+      b.innerHTML = '<span class="tape t' + (k % 3) + '" aria-hidden="true"></span><span class="pframe' + (it._fit === "contain" ? " contain" : "") + '"><img alt="" loading="eager" decoding="async"></span><span class="pcap"><span class="hand">' + esc(it.name) + ' <i class="doodle" aria-hidden="true">♡</i></span>' + (it.pickNote ? '<small>' + esc(it.pickNote) + '</small>' : '') + '</span><span class="psticker"><span>' + esc(priceText(it.price)) + '</span></span>';
       var im = b.querySelector("img"); if (k === 0) im.setAttribute("fetchpriority", "high"); if (src){ setSrc(im, src); im.sizes = "(max-width:700px) 72vw, 300px"; var lq = (window.LQIP || {})[src]; if (lq) b.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }
       b.addEventListener("click", function(){ openSheet(it, 0); });
+      if (matchMedia("(hover:hover)").matches) b.addEventListener("mouseenter", function(){ var r = b.getBoundingClientRect(); heartBurst(r.right - 24, r.top + 24); });
       shelf.appendChild(b);
     });
   }

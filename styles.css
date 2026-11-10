@@ -156,14 +156,25 @@ main{padding-block:22px 56px}
 :root[data-theme="dark"] .polaroid{background:#fbeef5}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .polaroid{background:#fbeef5}}
 .polaroid:hover,.polaroid:focus-visible{transform:rotate(0) translateY(-8px) scale(1.03);box-shadow:0 24px 44px rgba(120,80,110,.3);z-index:2}
-.polaroid .tape{position:absolute;left:50%;top:-12px;width:92px;height:26px;transform:translateX(-50%) rotate(calc(var(--r) * -1 - 2deg));background:repeating-linear-gradient(135deg,rgba(255,226,143,.85) 0 8px,rgba(255,255,255,.7) 8px 16px);opacity:.9;box-shadow:0 1px 2px rgba(0,0,0,.08);border-radius:2px}
+.polaroid .tape{position:absolute;left:50%;top:-12px;width:96px;height:26px;transform:translateX(-50%) rotate(calc(var(--r) * -1 - 2deg));background:repeating-linear-gradient(135deg,rgba(255,226,143,.85) 0 8px,rgba(255,255,255,.7) 8px 16px);opacity:.92;box-shadow:0 1px 2px rgba(0,0,0,.08);border-radius:2px}
+.polaroid .tape.t1{background:repeating-linear-gradient(135deg,rgba(247,177,201,.85) 0 8px,rgba(255,255,255,.7) 8px 16px)}
+.polaroid .tape.t2{background:repeating-linear-gradient(135deg,rgba(220,205,247,.9) 0 8px,rgba(255,255,255,.7) 8px 16px)}
+.pcap .doodle{font-style:normal;color:var(--heart);font-size:1.1em;display:inline-block;animation:beat 2.4s ease-in-out infinite}
+.xo{position:absolute;right:26px;top:22px;font:700 1.5rem/1 "Caveat","Bradley Hand","Segoe Print",cursive;color:var(--heart-ink);transform:rotate(6deg);opacity:.9}
+.picks-catwrap{position:relative;display:inline-block;flex:none}
+.fh{position:absolute;left:38px;top:6px;color:var(--heart);font-size:14px;font-style:normal;opacity:0;animation:floatHeart 3.6s ease-in-out infinite;pointer-events:none}
+.fh2{left:50px;top:12px;font-size:10px;animation-delay:1.2s} .fh3{left:26px;top:10px;font-size:11px;animation-delay:2.4s}
+@keyframes floatHeart{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.95}100%{transform:translate(10px,-42px) scale(1.2) rotate(15deg);opacity:0}}
+@media (hover:hover){.polaroid:hover{animation:wiggle .5s ease-in-out}}
 .pframe{aspect-ratio:1/1;overflow:hidden;background:#eee center/cover no-repeat;border-radius:3px;display:block}
 .pframe img{width:100%;height:100%;object-fit:cover;display:block}
 .pframe.contain img{object-fit:contain;padding:6px}
 .pcap{display:flex;flex-direction:column;gap:2px;padding:0 2px;min-height:44px;justify-content:center}
 .pcap .hand{font:700 1.35rem/1.1 "Caveat","Bradley Hand","Segoe Print",cursive;color:#4a3a55}
 .pcap small{font:600 .8rem/1.3 var(--body);color:#6a5b74}
-.psticker{position:absolute;right:-10px;top:14px;background:var(--heart-ink);color:#fff;font:600 1rem/1 var(--display);padding:9px 12px;border-radius:999px;transform:rotate(8deg);box-shadow:0 3px 0 #8f2850,0 6px 14px rgba(0,0,0,.18);border:2.5px solid #fffdfc}
+.psticker{position:absolute;right:-14px;top:4px;width:74px;height:70px;display:grid;place-items:center;color:#fff;font:600 .95rem/1 var(--display);transform:rotate(10deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.22))}
+.psticker::before{content:"";position:absolute;inset:0;background:#b8365f;clip-path:path("M37 66 L8 37 A17 17 0 0 1 37 15 A17 17 0 0 1 66 37 Z")}
+.psticker span{position:relative;z-index:1;padding-bottom:10px;text-shadow:0 1px 0 rgba(0,0,0,.2)}
 @keyframes polIn{from{transform:translateY(30px) rotate(calc(var(--r) + 10deg))}to{transform:rotate(var(--r))}}
 @media (max-width:700px){
   .picks{min-height:470px;padding:18px 14px 16px;margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));border-radius:0;border-left:0;border-right:0}
@@ -171,8 +182,10 @@ main{padding-block:22px 56px}
   .shelf{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:14px 18px 10px;scrollbar-width:none}
   .shelf::-webkit-scrollbar{display:none}
   .polaroid{flex:0 0 72vw;max-width:300px;scroll-snap-align:center}
+  .xo{right:16px;top:14px;font-size:1.25rem}
 }
-:root[data-motion="off"] .polaroid,:root[data-motion="off"] .picks-cat{animation:none}
+:root[data-motion="off"] .polaroid,:root[data-motion="off"] .picks-cat,:root[data-motion="off"] .fh,:root[data-motion="off"] .doodle{animation:none}
+:root[data-motion="off"] .fh{display:none}
 .badge{position:absolute;left:14px;top:14px;background:var(--sold);color:#fff;font:600 .78rem/1 var(--display);letter-spacing:.06em;padding:8px 12px;border-radius:999px;transform:rotate(-6deg);z-index:3;border:2.5px solid var(--card)}
 .thumbs{display:flex;gap:6px;padding:20px 14px 0;flex-wrap:wrap}
 .thumbs button{width:44px;height:44px;padding:0;border:2.5px solid transparent;border-radius:14px;overflow:hidden;background:var(--line);cursor:pointer;opacity:.7}

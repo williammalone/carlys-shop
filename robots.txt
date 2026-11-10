@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /kit.html
+Sitemap: https://williammalone.github.io/carlys-shop/sitemap.xml

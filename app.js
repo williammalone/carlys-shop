@@ -1,4 +1,6 @@
-(function(){
+// Deferred one frame so the static masthead and picks shelf paint before the catalog renders.
+requestAnimationFrame(function(){ setTimeout(function(){
+
   var S = window.SHOP || {items:[]};
   var $ = function(id){ return document.getElementById(id); };
   function esc(s){ return String(s).replace(/[&<>"']/g,function(ch){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]; }); }
@@ -42,8 +44,8 @@
 
   // chips
   var cat = "All", q = "";
-  function catSlug(k){ return k === "All" ? "" : k === "__saved" ? "saved" : k === "__sold" ? "sold" : slug(k); }
-  function catFromSlug(h){ if (h === "saved") return favs.size ? "__saved" : null; if (h === "sold") return anySold ? "__sold" : null; var hit = cats.filter(function(k){ return slug(k) === h; })[0]; return hit || null; }
+  function catSlug(k){ return k === "All" ? "" : k === "__saved" ? "saved" : k === "__sold" ? "sold" : k === "__under" ? "under-" + (S.giftMax || 50) : slug(k); }
+  function catFromSlug(h){ if (h === "saved") return favs.size ? "__saved" : null; if (h === "sold") return anySold ? "__sold" : null; if (h === "under-" + (S.giftMax || 50)) return "__under"; var hit = cats.filter(function(k){ return slug(k) === h; })[0]; return hit || null; }
   var FAVKEY = "carlys-favs";
   function loadFavs(){ try { return new Set(JSON.parse(localStorage.getItem(FAVKEY) || "[]")); } catch (e) { return new Set(); } }
   var favs = loadFavs();
@@ -67,6 +69,8 @@
       h += '<button class="chip" aria-pressed="' + (cat===k) + '" data-cat="' + esc(k) + '">' + (CHIPICON[k] || "") + esc(k) + '<small>' + n + '</small></button>';
     });
     if (favs.size) h += '<button class="chip" aria-pressed="' + (cat==="__saved") + '" data-cat="__saved"><span class="hv" aria-hidden="true"></span>Saved<small>' + base.filter(function(it){ return favs.has(it._slug); }).length + '</small></button>';
+    var gm = S.giftMax || 50, under = base.filter(function(it){ return it.price != null && it.price > 0 && it.price <= gm; }).length;
+    if (under) h += '<button class="chip" aria-pressed="' + (cat==="__under") + '" data-cat="__under">' + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13M12 8c-2-3-6-3-6 0 0 2 3 2 6 0M12 8c2-3 6-3 6 0 0 2-3 2-6 0"/></svg>Under $' + gm + '<small>' + under + '</small></button>';
     if (anySold) h += '<button class="chip" aria-pressed="' + (cat==="__sold") + '" data-cat="__sold">Sold<small>' + items.filter(function(it){ return it.sold; }).length + '</small></button>';
     $("chips").innerHTML = h;
     Array.prototype.forEach.call($("chips").children, function(ch, k){ ch.style.setProperty("--k", k); });
@@ -118,6 +122,7 @@
     if (name) lines.push("Name: " + name);
     lines.push("Pickup: " + when + (c.location ? " in " + c.location : ""));
     if (pay) lines.push("Paying with: " + pay);
+    if ($("cGift").checked) lines.push("It's a gift: yes, please leave the price off");
     if (note) lines.push("", note);
     lines.push("", itemUrl(it));
     return { subject: (it._bundle ? "Claim: " : "Claim: ") + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
@@ -145,6 +150,7 @@
     var sort = $("sort").value;
     var list = visibleBase();
     if (cat === "__sold") list = items.filter(function(it){ return it.sold; });
+    else if (cat === "__under") list = list.filter(function(it){ var gm = S.giftMax || 50; return it.price != null && it.price > 0 && it.price <= gm; });
     else if (cat === "__saved") list = list.filter(function(it){ return favs.has(it._slug); });
     else if (cat !== "All") list = list.filter(function(it){ return (it.category||"Other")===cat; });
     list = list.filter(matches);
@@ -156,7 +162,7 @@
     lastList = list.slice();
     renderPicks(cat === "All" && !q);
     var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
-    $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
+    $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
     if (!list.length){
       var allSold = items.length && items.every(function(it){ return it.sold; });
@@ -178,6 +184,7 @@
       else { frame.innerHTML = '<span class="noimg">Photo coming</span>'; ph.disabled = true; }
       var pt = document.createElement("span"); pt.className = "pt" + (it.price==null ? " ask" : ""); pt.textContent = priceText(it.price); pt.style.setProperty("--i", grid.children.length); ph.appendChild(pt);
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
+      else if (it.added && (Date.now() - new Date(it.added).getTime()) < 14 * 864e5){ var nb = document.createElement("span"); nb.className = "badge new"; nb.textContent = "New"; ph.appendChild(nb); }
 
       card.appendChild(ph);
       if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Mark sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk); }
@@ -231,14 +238,19 @@
     sec.hidden = false;
     if (S.picksTitle) $("picksTitle").textContent = S.picksTitle;
     $("picksSub").textContent = S.picksSub || (picks.length + " favorites right now");
-    var shelf = $("shelf"); shelf.innerHTML = "";
+    var shelf = $("shelf");
+    var existing = shelf.querySelectorAll(".polaroid[data-slug]");
+    if (existing.length && existing.length === picks.length && Array.prototype.every.call(existing, function(el, k){ return el.getAttribute("data-slug") === picks[k]._slug; })){
+      if (!shelf.dataset.bound){ shelf.dataset.bound = "1"; Array.prototype.forEach.call(existing, function(el, k){ el.addEventListener("click", function(){ openSheet(picks[k], 0); }); var lq = (window.LQIP || {})[picks[k]._pics[0]]; if (lq) el.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }); }
+      return;
+    }
+    shelf.innerHTML = "";
     var rots = [-4, 2.5, -1.5, 3];
     picks.forEach(function(it, k){
       var b = document.createElement("button"); b.type = "button"; b.className = "polaroid"; b.style.setProperty("--r", rots[k % rots.length] + "deg"); b.style.setProperty("--k", k);
-      b.setAttribute("aria-label", "Open " + it.name + ", " + priceText(it.price));
       var src = it._pics[0] || "";
       b.innerHTML = '<span class="tape" aria-hidden="true"></span><span class="pframe' + (it._fit === "contain" ? " contain" : "") + '"><img alt="" loading="eager" decoding="async"></span><span class="pcap"><span class="hand">' + esc(it.name) + '</span>' + (it.pickNote ? '<small>' + esc(it.pickNote) + '</small>' : '') + '</span><span class="psticker">' + esc(priceText(it.price)) + '</span>';
-      var im = b.querySelector("img"); if (src){ setSrc(im, src); im.sizes = "(max-width:700px) 72vw, 300px"; var lq = (window.LQIP || {})[src]; if (lq) b.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }
+      var im = b.querySelector("img"); if (k === 0) im.setAttribute("fetchpriority", "high"); if (src){ setSrc(im, src); im.sizes = "(max-width:700px) 72vw, 300px"; var lq = (window.LQIP || {})[src]; if (lq) b.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }
       b.addEventListener("click", function(){ openSheet(it, 0); });
       shelf.appendChild(b);
     });
@@ -460,4 +472,5 @@
     if ("IntersectionObserver" in window && steps){ var io = new IntersectionObserver(function(en){ en.forEach(function(x){ if (x.isIntersecting){ steps.classList.add("seen"); io.disconnect(); } }); }, {threshold:.2}); io.observe(steps); }
     else if (steps) steps.classList.add("seen");
   } else { var st = document.querySelector(".steps"); if (st) st.classList.add("seen"); }
-})();
+
+}, 0); });

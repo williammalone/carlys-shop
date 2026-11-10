@@ -42,6 +42,40 @@ for (const it of items) {
   fs.writeFileSync(path.join(dir, "index.html"), html); n++;
 }
 console.log(`wrote ${n} item pages in p/`);
+if (base) {
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = [base, base + "flyer.html", ...items.map(it => base + "p/" + slug(it.name) + "/")];
+  fs.writeFileSync(path.join(root, "sitemap.xml"), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(u => `  <url><loc>${esc(u)}</loc><lastmod>${today}</lastmod></url>`).join("\n") + "\n</urlset>\n");
+  fs.writeFileSync(path.join(root, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /kit.html\nSitemap: ${base}sitemap.xml\n`);
+  console.log(`wrote sitemap.xml (${urls.length} urls) and robots.txt`);
+}
+
+// 1b. static picks shelf + preload hint, so the first paint already has the polaroids
+{
+  const picks = items.filter(it => it.featured && !it.sold).slice(0, 4);
+  const rots = [-4, 2.5, -1.5, 3];
+  const variant = (src, dir) => src.replace(/^images\//, "images/" + dir + "/");
+  const html = picks.map((it, k) => {
+    const src = (it.images && it.images[0]) || it.image || "", sl = slug(it.name);
+    const fit = it.fit || (it.category === "Art" ? "contain" : "cover");
+    const price = it.price == null ? "Ask us" : it.price === 0 ? "Free" : "$" + it.price;
+    return `<button type="button" class="polaroid" data-slug="${sl}" style="--r:${rots[k % rots.length]}deg;--k:${k}"><span class="tape" aria-hidden="true"></span><span class="pframe${fit === "contain" ? " contain" : ""}"><img alt="" loading="eager" decoding="async"${k === 0 ? ' fetchpriority="high"' : ""} src="${esc(variant(src, "thumbs"))}" srcset="${esc(variant(src, "small"))} 360w, ${esc(variant(src, "thumbs"))} 600w, ${esc(src)} 1200w" sizes="(max-width:700px) 72vw, 300px"></span><span class="pcap"><span class="hand">${esc(it.name)}</span>${it.pickNote ? `<small>${esc(it.pickNote)}</small>` : ""}</span><span class="psticker">${esc(price)}</span></button>`;
+  }).join("");
+  let idx = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  idx = idx.replace(/<!-- shelf:start -->[\s\S]*?<!-- shelf:end -->/, "<!-- shelf:start -->" + html + "<!-- shelf:end -->");
+  const first = picks[0] && ((picks[0].images && picks[0].images[0]) || picks[0].image);
+  const pre = first ? `<link rel="preload" as="image" href="${esc(variant(first, "thumbs"))}" imagesrcset="${esc(variant(first, "small"))} 360w, ${esc(variant(first, "thumbs"))} 600w, ${esc(first)} 1200w" imagesizes="(max-width:700px) 72vw, 300px" fetchpriority="high">` : "";
+  idx = idx.replace(/<!-- preload:start -->[\s\S]*?<!-- preload:end -->/, "<!-- preload:start -->" + pre + "<!-- preload:end -->");
+  // static masthead text so nothing grows after first paint
+  const t = S.title || "For Sale", m = t.match(/^(.*?)(\s+(?:Blankets|Art|Knits|Crochet|Paintings|Shop|Sale)\b.*)$/i);
+  const titleHtml = m ? esc(m[1]) + "<em>" + esc(m[2].trim()) + "</em>" : esc(t);
+  idx = idx.replace(/<h1 id="title">[\s\S]*?<\/h1>/, `<h1 id="title">${titleHtml}</h1>`);
+  idx = idx.replace(/<span id="eyebrow">[\s\S]*?<\/span>/, `<span id="eyebrow">${esc(S.eyebrow || "Handmade · one of each")}</span>`);
+  idx = idx.replace(/<p class="tag" id="tagline">[\s\S]*?<\/p>/, `<p class="tag" id="tagline">${esc(S.tagline || "")}</p>`);
+  idx = idx.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(t)}</title>`);
+  fs.writeFileSync(path.join(root, "index.html"), idx);
+  console.log(`injected static shelf (${picks.length} picks), masthead text and preload hint into index.html`);
+}
 
 // 2. blurred placeholders via Pillow (tiny 20px JPEGs as data URIs)
 const pics = [...new Set(items.flatMap(it => (it.images && it.images.length ? it.images : [it.image]).filter(Boolean)))];

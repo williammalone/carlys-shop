@@ -7,6 +7,7 @@
 //   description  a sentence or two
 //   image        main photo (relative path). Optional if `images` is set.
 //   images       optional list of photos; the first is the main one, the rest show as thumbnails
+//   added        optional date, e.g. "2026-11-20"; shows a "New" badge for two weeks
 //   featured     true puts it on the "Carly's picks" shelf above the grid and lists it first
 //   pickNote     optional short handwritten line under the caption on the shelf
 //   sold         true hides it by default and shows a SOLD badge
@@ -19,6 +20,7 @@ window.SHOP = {
   tagline: "Chunky knit blankets, crochet you can wear, beds your cat will steal, and original paintings. All handmade in Colorado.",
   eyebrow: "Handmade · one of each · ready for holiday gifting",
   payment: "Cash or Venmo at pickup.",
+  giftMax: 50,                       // the "Under $50" chip threshold
   url: "https://williammalone.github.io/carlys-shop/",   // used for share links and previews
   // Payments. Fill any of these and "Pay $X with ..." buttons appear in each item's detail view,
   // prefilled with the price and item name. Leave empty to hide.
@@ -53,6 +55,7 @@ window.SHOP = {
     {
       name: "Navy chunky knit blanket",
       featured: true,
+      pickNote: "big enough to wear",
       category: "Blankets",
       price: 140,
       condition: "New, handmade",
@@ -92,6 +95,7 @@ window.SHOP = {
     {
       name: "Granny-square hooded scarf",
       featured: true,
+      pickNote: "the hood is built in",
       category: "Wearables",
       price: 55,
       condition: "New, handmade",
@@ -187,6 +191,7 @@ window.SHOP = {
     {
       name: "Rainbow cat, acrylic on canvas",
       featured: true,
+      pickNote: "18 x 24, ready to hang",
       category: "Art",
       price: 150,
       condition: "Original, ready to hang",

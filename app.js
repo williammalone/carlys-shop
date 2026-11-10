@@ -23,7 +23,9 @@ requestAnimationFrame(function(){ setTimeout(function(){
   var t = S.title || "For Sale", m = t.match(/^(.*?)(\s+(?:Blankets|Art|Knits|Crochet|Paintings|Shop|Sale)\b.*)$/i);
   $("title").innerHTML = m ? esc(m[1]) + "<em>" + esc(m[2].trim()) + "</em>" : esc(t);
   $("tagline").textContent = S.tagline || "";
-  if (S.eyebrow) $("eyebrow").textContent = S.eyebrow;
+  if (window.matchMedia && matchMedia("(max-width:400px)").matches) $("q").placeholder = "Search";
+  function ebHtml(s){ var p = String(s).split(" · "); return esc(p.slice(0, 2).join(" · ")) + (p.length > 2 ? '<span class="eb-more"> · ' + esc(p.slice(2).join(" · ")) + '</span>' : ""); }
+  if (S.eyebrow) $("eyebrow").innerHTML = ebHtml(S.eyebrow);
   var avail0 = items.filter(function(it){ return !it.sold; }).length;
   $("meta").innerHTML = (c.location ? '<span class="pill loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.6"/></svg>Local pickup in ' + esc(c.location) + '</span>' : "") +
     '<span class="pill count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>' + avail0 + ' pieces</span>' +
@@ -303,8 +305,14 @@ requestAnimationFrame(function(){ setTimeout(function(){
     else if (href) cta = tools + '<div class="accepted">We take ' + ACCEPTED.map(function(m){ return "<span>" + esc(m) + "</span>"; }).join("") + ' at pickup</div><p class="hint">Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
     else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>' + payHtml;
     $("shcta").innerHTML = cta;
-    $("shbar").innerHTML = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shbarclaim">Claim this piece · ' + esc(priceText(it.price)) + '</button>' : "";
+    var barMain = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shbarclaim">Claim this piece · ' + esc(priceText(it.price)) + '</button>' : "";
+    var favIco = '<svg viewBox="0 0 24 24" fill="' + (saved ? "currentColor" : "none") + '" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>';
+    var shareIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>';
+    $("shbar").innerHTML = barMain ? (it._bundle ? "" : '<button type="button" class="iconbtn" id="shbarfav" aria-pressed="' + saved + '" aria-label="' + (saved ? "Saved" : "Save") + '">' + favIco + '</button>') + barMain + '<button type="button" class="iconbtn" id="shbarshare" aria-label="Share">' + shareIco + '</button>' : "";
+    sheet.classList.toggle("hasbar", !!barMain);
     var sbc = $("shbarclaim"); if (sbc) sbc.addEventListener("click", function(){ showClaim(it); });
+    var sbf = $("shbarfav"); if (sbf) sbf.addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
+    var sbs = $("shbarshare"); if (sbs) sbs.addEventListener("click", function(){ shareItem(it); });
     var sc = $("shclaim"); if (sc) sc.addEventListener("click", function(){ showClaim(it); });
     var cf = $("claim"); if (cf.dataset.slug !== it._slug){ cf.hidden = true; $("cName").value = ""; $("cNote").value = ""; }
     var sf = $("shfav"); if (sf) sf.addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });

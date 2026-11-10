@@ -66,11 +66,12 @@ if (base) {
   const first = picks[0] && ((picks[0].images && picks[0].images[0]) || picks[0].image);
   const pre = first ? `<link rel="preload" as="image" href="${esc(variant(first, "thumbs"))}" imagesrcset="${esc(variant(first, "small"))} 360w, ${esc(variant(first, "thumbs"))} 600w, ${esc(first)} 1200w" imagesizes="(max-width:700px) 72vw, 300px" fetchpriority="high">` : "";
   idx = idx.replace(/<!-- preload:start -->[\s\S]*?<!-- preload:end -->/, "<!-- preload:start -->" + pre + "<!-- preload:end -->");
+  const ebHtml = v => { const p = String(v).split(" · "); return esc(p.slice(0, 2).join(" · ")) + (p.length > 2 ? `<span class="eb-more"> · ${esc(p.slice(2).join(" · "))}</span>` : ""); };
   // static masthead text so nothing grows after first paint
   const t = S.title || "For Sale", m = t.match(/^(.*?)(\s+(?:Blankets|Art|Knits|Crochet|Paintings|Shop|Sale)\b.*)$/i);
   const titleHtml = m ? esc(m[1]) + "<em>" + esc(m[2].trim()) + "</em>" : esc(t);
   idx = idx.replace(/<h1 id="title">[\s\S]*?<\/h1>/, `<h1 id="title">${titleHtml}</h1>`);
-  idx = idx.replace(/<span id="eyebrow">[\s\S]*?<\/span>/, `<span id="eyebrow">${esc(S.eyebrow || "Handmade · one of each")}</span>`);
+  idx = idx.replace(/<span id="eyebrow">[\s\S]*?<\/span>/, `<span id="eyebrow">${ebHtml(S.eyebrow || "Handmade · one of each")}</span>`);
   idx = idx.replace(/<p class="tag" id="tagline">[\s\S]*?<\/p>/, `<p class="tag" id="tagline">${esc(S.tagline || "")}</p>`);
   idx = idx.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(t)}</title>`);
   fs.writeFileSync(path.join(root, "index.html"), idx);

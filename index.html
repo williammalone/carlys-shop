@@ -20,8 +20,8 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Caveat:wght@600;700&display=swap"></noscript>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -76,6 +76,13 @@
 </nav>
 
 <main class="wrap">
+  <section class="picks" id="picks" aria-labelledby="picksTitle" hidden>
+    <div class="picks-head">
+      <img class="picks-cat" src="images/logo.svg" alt="" width="72" height="70">
+      <div><h2 class="hand" id="picksTitle">Carly's picks</h2><p id="picksSub">Three favorites right now</p></div>
+    </div>
+    <div class="shelf" id="shelf"></div>
+  </section>
   <p class="results" id="results" aria-live="polite"></p>
   <div class="savedbar" id="savedBar" hidden></div>
   <div class="grid" id="grid"></div>

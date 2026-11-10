@@ -154,6 +154,7 @@
     else list.sort(function(a,b){ return (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i-b._i; });
 
     lastList = list.slice();
+    renderPicks(cat === "All" && !q);
     var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
     $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
@@ -173,11 +174,11 @@
       var frame = document.createElement("span"); frame.className = "frame"; ph.appendChild(frame);
       var lq = (window.LQIP || {})[it._pics[0]]; if (lq){ frame.style.backgroundImage = "url(" + lq + ")"; frame.style.backgroundSize = "cover"; frame.style.backgroundPosition = "center"; }
       var im = null, shown = 0;
-      if (it._pics.length){ im = document.createElement("img"); fadeIn(im); setSrc(im, it._pics[0]); im.alt = it.name; im.loading = grid.children.length < (window.innerWidth < 560 ? 2 : 4) ? "eager" : "lazy"; if (grid.children.length === 0) im.setAttribute("fetchpriority", "high"); im.decoding = "async"; im.sizes = it.featured ? "(max-width:560px) 100vw, (max-width:1100px) 66vw, 560px" : "(max-width:560px) 50vw, (max-width:1100px) 33vw, 280px"; frame.appendChild(im); ph.addEventListener("click", function(){ openSheet(it, shown); }); }
+      if (it._pics.length){ im = document.createElement("img"); fadeIn(im); setSrc(im, it._pics[0]); im.alt = it.name; im.loading = grid.children.length < (window.innerWidth < 560 ? 2 : 4) ? "eager" : "lazy"; if (grid.children.length === 0) im.setAttribute("fetchpriority", "high"); im.decoding = "async"; im.sizes = "(max-width:560px) 50vw, (max-width:1100px) 33vw, 280px"; frame.appendChild(im); ph.addEventListener("click", function(){ openSheet(it, shown); }); }
       else { frame.innerHTML = '<span class="noimg">Photo coming</span>'; ph.disabled = true; }
       var pt = document.createElement("span"); pt.className = "pt" + (it.price==null ? " ask" : ""); pt.textContent = priceText(it.price); pt.style.setProperty("--i", grid.children.length); ph.appendChild(pt);
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
-      else if (it.featured){ card.classList.add("featured"); ph.classList.add("wide"); var pk = document.createElement("span"); pk.className = "peek"; pk.setAttribute("aria-hidden", "true"); pk.innerHTML = '<img src="images/logo.svg" alt="" width="84" height="82"><span class="bubble">' + esc(S.featuredLabel || "Carly's pick") + ' <b>♥</b><i class="sp sp1"></i><i class="sp sp2"></i></span>'; card.appendChild(pk); }
+
       card.appendChild(ph);
       if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Mark sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk); }
       if (it._pics.length > 1 && im && matchMedia("(hover:hover)").matches){
@@ -224,6 +225,24 @@
     }
   }
   var lastList = [];
+  function renderPicks(show){
+    var sec = $("picks"), picks = items.filter(function(it){ return it.featured && !it.sold; }).slice(0, 4);
+    if (!show || picks.length < 2){ sec.hidden = true; return; }
+    sec.hidden = false;
+    if (S.picksTitle) $("picksTitle").textContent = S.picksTitle;
+    $("picksSub").textContent = S.picksSub || (picks.length + " favorites right now");
+    var shelf = $("shelf"); shelf.innerHTML = "";
+    var rots = [-4, 2.5, -1.5, 3];
+    picks.forEach(function(it, k){
+      var b = document.createElement("button"); b.type = "button"; b.className = "polaroid"; b.style.setProperty("--r", rots[k % rots.length] + "deg"); b.style.setProperty("--k", k);
+      b.setAttribute("aria-label", "Open " + it.name + ", " + priceText(it.price));
+      var src = it._pics[0] || "";
+      b.innerHTML = '<span class="tape" aria-hidden="true"></span><span class="pframe' + (it._fit === "contain" ? " contain" : "") + '"><img alt="" loading="eager" decoding="async"></span><span class="pcap"><span class="hand">' + esc(it.name) + '</span>' + (it.pickNote ? '<small>' + esc(it.pickNote) + '</small>' : '') + '</span><span class="psticker">' + esc(priceText(it.price)) + '</span>';
+      var im = b.querySelector("img"); if (src){ setSrc(im, src); im.sizes = "(max-width:700px) 72vw, 300px"; var lq = (window.LQIP || {})[src]; if (lq) b.querySelector(".pframe").style.backgroundImage = "url(" + lq + ")"; }
+      b.addEventListener("click", function(){ openSheet(it, 0); });
+      shelf.appendChild(b);
+    });
+  }
   var cdlg = $("customDlg");
   function openCustom(preset){ if (preset){ var sel = $("cdWhat"); Array.prototype.forEach.call(sel.options, function(o){ if (o.text.toLowerCase().indexOf(preset) >= 0) sel.value = o.text; }); } if (sheet.open){ fromPop = true; sheet.close(); fromPop = false; } if (typeof cdlg.showModal === "function" && !cdlg.open) cdlg.showModal(); $("cdTitle").focus && $("cdWhat").focus(); }
   document.addEventListener("click", function(e){ var b = e.target.closest("[data-custom]"); if (!b) return; e.preventDefault(); openCustom(b.getAttribute("data-custom") || ""); });

@@ -7,7 +7,8 @@
 //   description  a sentence or two
 //   image        main photo (relative path). Optional if `images` is set.
 //   images       optional list of photos; the first is the main one, the rest show as thumbnails
-//   featured     true shows a "Carly's pick" badge and lists it first in the default order
+//   featured     true puts it on the "Carly's picks" shelf above the grid and lists it first
+//   pickNote     optional short handwritten line under the caption on the shelf
 //   sold         true hides it by default and shows a SOLD badge
 //   buy          optional Stripe Payment Link URL; shows a "Buy now" button
 //

@@ -39,6 +39,7 @@ window.SHOP = {
   custom: {
     title: "Want something custom?",
     text: "A blanket in your colors, a pet portrait from a photo, or a card with your words. Carly takes requests."
+    // Custom requests open a short form (what, colors/size, budget, timing) that emails the details.
   },
   contact: {
     // Buyers tap "I'm interested" to open one of these. Fill in one or both.

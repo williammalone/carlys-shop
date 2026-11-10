@@ -87,6 +87,7 @@
     <div class="about-text">
       <h2 id="aboutTitle">About Carly</h2>
       <p id="aboutText"></p>
+      <p class="dibs" id="dibs" hidden></p>
     </div>
   </div>
 </section>
@@ -107,6 +108,7 @@
       <button type="button" class="btn" id="adminCopy">Copy updated products.js</button>
       <a class="btn ghost" id="adminEdit" href="https://github.com/williammalone/carlys-shop/edit/main/products.js" target="_blank" rel="noopener">Open products.js on GitHub</a>
       <a class="btn ghost" href="flyer.html" target="_blank" rel="noopener">Print a flyer</a>
+      <a class="btn ghost" href="kit.html" target="_blank" rel="noopener">Marketing kit</a>
       <button type="button" class="btn ghost" id="adminOff">Exit</button>
     </div>
   </div>
@@ -115,6 +117,23 @@
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </footer>
 
+<dialog class="sheet custom-dlg" id="customDlg" aria-labelledby="cdTitle">
+  <button class="shx" id="cdx" aria-label="Close">×</button>
+  <form class="claim cform" id="cform" novalidate>
+    <div class="cat">Custom order</div>
+    <h2 id="cdTitle">Tell Carly what you'd love</h2>
+    <p class="hint" id="cdIntro">A blanket in your colors, a portrait of your pet from a photo, a card with your words. Fill in what you can and it opens an email to us. We'll reply with a price and timing.</p>
+    <label>What kind of piece?<select id="cdWhat"><option>Chunky knit blanket</option><option>Pet portrait (painting)</option><option>Crochet wearable</option><option>Cat bed or home piece</option><option>Pop-up cards</option><option>Something else</option></select></label>
+    <label>Colors, size, or details<textarea id="cdDetails" rows="3" placeholder="e.g. Navy and sage, big enough for a queen bed · or · my orange tabby, 11x14, from this photo"></textarea></label>
+    <div class="two">
+      <label>Budget<select id="cdBudget"><option>Flexible</option><option>Under $50</option><option>$50 to $100</option><option>$100 to $200</option><option>$200+</option></select></label>
+      <label>Timing<select id="cdWhen"><option>No rush</option><option>Before the holidays</option><option>Within a month</option><option>A specific date (say below)</option></select></label>
+    </div>
+    <label>Your name<input type="text" id="cdName" autocomplete="name"></label>
+    <div class="row"><button type="submit" class="btn">Send request</button><button type="button" class="btn ghost" id="cdCopy">Copy instead</button></div>
+    <p class="hint">Opens your email app with everything filled in. Nothing is sent until you hit send.</p>
+  </form>
+</dialog>
 <dialog class="sheet" id="sheet" aria-labelledby="shname">
   <button class="shx" id="shx" aria-label="Close">×</button>
   <div class="zoom" id="zoom" hidden><img id="zoomimg" alt=""><button type="button" class="shx" id="zoomx" aria-label="Close zoom">×</button></div>

@@ -343,6 +343,15 @@ dialog.sheet::backdrop{background:rgba(60,40,70,.6);backdrop-filter:blur(6px)}
 .paybtn:hover{transform:translateY(-1px)}
 .paybtn.venmo{background:#008CFF} .paybtn.cashapp{background:#00D632;color:#0b2a12} .paybtn.paypal{background:#003087}
 
+/* custom order dialog */
+dialog.custom-dlg{width:min(94vw,560px);max-height:calc(100vh - 32px);padding:28px 26px 22px;overflow:auto}
+.cform{border-top:0;padding-top:0;margin-top:0;animation:none}
+.cform h2{font:600 1.6rem/1.1 var(--display);margin:0}
+.cform .cat{align-self:flex-start;font:700 .75rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--on-pastel);background:var(--butter);padding:7px 12px;border-radius:999px}
+.cform .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:480px){.cform .two{grid-template-columns:1fr}dialog.custom-dlg{width:100vw;max-width:100vw;max-height:100vh;height:100vh;border-radius:0;margin:0;padding-top:calc(28px + env(safe-area-inset-top,0px))}}
+.dibs{margin:12px 0 0;font-size:.95rem}
+.dibs a{color:var(--heart-ink);font-weight:800}
 /* claim form */
 .claim{display:flex;flex-direction:column;gap:10px;border-top:2px dashed var(--line);padding-top:14px;margin-top:4px;animation:rise .35s cubic-bezier(.2,.8,.2,1)}
 .claim-title{font:600 1.1rem/1.2 var(--display)}

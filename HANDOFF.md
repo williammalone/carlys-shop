@@ -35,6 +35,13 @@ A simple static website to sell handmade items Carly sent William by text. Carly
 5. **Hosting** is automatic: `.github/workflows/pages.yml` deploys to GitHub Pages on every push to `main`, at https://williammalone.github.io/carlys-shop/. The claude.ai artifact link is a second copy that must be republished by hand.
 6. Open `index.html` locally to check. The fifth session verified it renders at desktop and phone widths with no broken images or console errors.
 
+## Selling more (added Nov 10)
+
+- **Marketing kit** at `/kit.html` (also linked from the admin bar): for every available piece, a ready-to-post 1080x1080 image (plus a 1080x1920 story for Carly's picks), copy-paste text for Facebook Marketplace / Nextdoor, and an Instagram caption with hashtags. Images are generated on deploy by `tools/build-social.js` (not committed). Posting one or two pieces a day where local buyers already are is the single biggest traffic lever this site has.
+- **Custom orders** are a form now (`#customDlg`): what kind of piece, colors/size, budget, timing, name, composing an email. Reached from the "Request a custom piece" card and from sold pieces. Commissions (blankets in chosen colors, pet portraits) are the highest-value sales the catalog can produce.
+- **First dibs** line in the About card lets people ask to be told about new pieces, so the list of past buyers becomes the audience for the next batch. Turn it off with `about.dibs: false`.
+- The three `featured` pieces list first and carry a "Carly's pick" badge; rotate them weekly to keep the top of the page fresh for repeat visitors.
+
 ## Taking payment
 
 The site has no server, so payment works one of three ways. All three are already supported by `index.html`; only `products.js` needs filling in.

@@ -219,11 +219,24 @@
       var cc = document.createElement("article"); cc.className = "card custom"; cc.style.setProperty("--i", Math.min(grid.children.length, 11));
       var href = c.sms ? "sms:" + c.sms + "?&body=" + encodeURIComponent("Hi! I'd love to ask about a custom piece.") : c.email ? "mailto:" + c.email + "?subject=" + encodeURIComponent("Custom piece") : "";
       cc.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z"/><path d="M8.5 9.5c1.2-1 2.6-1 3.5 0"/></svg><h2>' + esc(S.custom.title || "Want something custom?") + '</h2><p>' + esc(S.custom.text || "") + '</p>' +
-        (href ? '<a class="btn" href="' + esc(href) + '">Ask Carly</a>' : '<button type="button" class="btn" data-soon>Ask Carly</button>');
+        (hasContact ? '<button type="button" class="btn" data-custom>Request a custom piece</button>' : '<button type="button" class="btn" data-soon>Ask Carly</button>');
       grid.appendChild(cc);
     }
   }
   var lastList = [];
+  var cdlg = $("customDlg");
+  function openCustom(preset){ if (preset){ var sel = $("cdWhat"); Array.prototype.forEach.call(sel.options, function(o){ if (o.text.toLowerCase().indexOf(preset) >= 0) sel.value = o.text; }); } if (sheet.open){ fromPop = true; sheet.close(); fromPop = false; } if (typeof cdlg.showModal === "function" && !cdlg.open) cdlg.showModal(); $("cdTitle").focus && $("cdWhat").focus(); }
+  document.addEventListener("click", function(e){ var b = e.target.closest("[data-custom]"); if (!b) return; e.preventDefault(); openCustom(b.getAttribute("data-custom") || ""); });
+  $("cdx").addEventListener("click", function(){ cdlg.close(); }); cdlg.addEventListener("click", function(e){ if (e.target === cdlg) cdlg.close(); });
+  function customText(){
+    var what = $("cdWhat").value, det = $("cdDetails").value.trim(), bud = $("cdBudget").value, when = $("cdWhen").value, name = $("cdName").value.trim();
+    var lines = ["Hi Carly! I'd love a custom piece.", "", "What: " + what, "Budget: " + bud, "Timing: " + when];
+    if (det) lines.push("", "Details: " + det);
+    if (name) lines.push("", "Name: " + name);
+    return { subject: "Custom request: " + what, body: lines.join("\n") };
+  }
+  $("cform").addEventListener("submit", function(e){ e.preventDefault(); if (!hasContact) return; var t = customText(); window.location.href = c.sms ? "sms:" + c.sms + "?&body=" + encodeURIComponent(t.body) : "mailto:" + c.email + "?subject=" + encodeURIComponent(t.subject) + "&body=" + encodeURIComponent(t.body); toast("Opening your " + (c.sms ? "messages" : "email") + " app…"); });
+  $("cdCopy").addEventListener("click", function(){ var t = customText(), txt = "To: " + (c.sms || c.email) + "\nSubject: " + t.subject + "\n\n" + t.body; var done = function(){ toast("Request copied."); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function(){ prompt("Copy this:", txt); }); else prompt("Copy this:", txt); });
   document.addEventListener("click", function(e){ var b = e.target.closest("[data-soon]"); if (b) toast("Contact details are coming soon."); });
 
   // detail sheet
@@ -250,7 +263,7 @@
     if (pays.length){
       payHtml = '<div class="pay"><div class="pay-title">' + (buy ? "Or pay directly" : "Pay " + esc(priceText(it.price))) + '</div><div class="pay-row">' + pays.map(function(l){ return '<a class="paybtn ' + l.cls + '" href="' + esc(l.href) + '" target="_blank" rel="noopener">' + esc(l.name) + '</a>'; }).join("") + '</div><p class="hint">' + esc(PAY.note || "Message first so we can confirm it's still available, then pay.") + '</p></div>';
     }
-    if (it.sold) cta = tools + '<p class="hint">This one has found a home. Browse the rest, or ask about a custom piece.</p>';
+    if (it.sold) cta = tools + '<p class="hint">This one has found a home. Browse the rest, or ' + (hasContact ? '<a href="#" data-custom>ask for a custom piece</a>.' : 'check back for new pieces.') + '</p>';
     else if (buy) cta = tools + '<p class="hint">Secure checkout with card or Apple Pay. ' + (href ? 'Questions? <a href="' + esc(href) + '">Send a message</a>.' : '') + '</p>' + payHtml;
     else if (href) cta = tools + '<div class="accepted">We take ' + ACCEPTED.map(function(m){ return "<span>" + esc(m) + "</span>"; }).join("") + ' at pickup</div><p class="hint">Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
     else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>' + payHtml;
@@ -418,6 +431,7 @@
   if (S.about && (S.about.text || S.about.image)){
     if (S.about.title) $("aboutTitle").textContent = S.about.title;
     $("aboutText").textContent = S.about.text || "";
+    if (hasContact && S.about.dibs !== false){ var d = $("dibs"); d.hidden = false; d.innerHTML = 'Want first dibs when new pieces are added? <a href="' + (c.sms ? "sms:" + c.sms + "?&body=" + encodeURIComponent("Hi! Please add me to the list for new pieces.") : "mailto:" + c.email + "?subject=" + encodeURIComponent("First dibs list") + "&body=" + encodeURIComponent("Hi! Please add me to the list for new pieces.")) + '">Say so here</a> and we\'ll let you know first.'; }
     if (S.about.image){ var ai = $("aboutImg"); setSrc(ai, S.about.image); ai.sizes = "(max-width:700px) 100vw, 300px"; ai.loading = "lazy"; ai.decoding = "async"; ai.alt = S.about.alt || "Carly"; } else $("aboutImg").parentNode.remove();
   }
   $("hideSold").addEventListener("change", function(){ chips(); render(); });

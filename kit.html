@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Marketing kit · Carly's Handmade</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="images/logo.svg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Nunito:wght@600;700;800&display=swap">
+<style>
+  :root{--bg:#fdf3f7;--card:#fffdfc;--ink:#4a3a55;--muted:#6a5b74;--line:#f1dbe6;--pink:#f7b1c9;--heart:#b8365f;--mint:#bdebd8;--butter:#ffe28f;--lavender:#dccdf7}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Nunito,system-ui,sans-serif}
+  .wrap{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+  h1{font:600 2rem/1.1 Fredoka;margin:0 0 6px} .sub{color:var(--muted);margin:0 0 22px;max-width:70ch}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:0 0 28px;padding:0;list-style:none}
+  .steps li{background:var(--card);border:2px dashed var(--line);border-radius:18px;padding:14px 16px;font-size:.95rem} .steps b{display:block;font:600 1.05rem Fredoka;margin-bottom:4px}
+  .grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .k{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:0 8px 24px rgba(120,80,110,.1);display:flex;flex-direction:column}
+  .k img{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--line)}
+  .k .b{padding:14px;display:flex;flex-direction:column;gap:8px}
+  .k h2{font:600 1.05rem/1.2 Fredoka;margin:0}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:8px 14px;border-radius:999px;border:0;background:var(--pink);color:var(--ink);font:800 .88rem Nunito;cursor:pointer;text-decoration:none;box-shadow:0 3px 0 #e07ca1}
+  .btn.ghost{background:var(--card);border:2px solid var(--line);box-shadow:0 3px 0 var(--line)}
+  textarea{width:100%;min-height:120px;border:2px solid var(--line);border-radius:14px;padding:10px;font:600 .85rem/1.45 Nunito;color:var(--ink);background:var(--bg);resize:vertical}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font:700 .9rem Nunito;z-index:9}
+  .note{background:var(--butter);border-radius:14px;padding:10px 14px;font-size:.9rem;margin-bottom:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Marketing kit</h1>
+  <p class="sub">Ready-to-post images and copy for every piece, built from the catalog on each deploy. Post one or two a day where local buyers already are: Instagram, Facebook Marketplace, Nextdoor, a neighborhood or work group chat. Every post links straight to the piece.</p>
+  <div class="note" id="note" hidden>Images aren't built yet. They're generated when the site deploys (or run <code>node tools/build-social.js</code>). Copy still works.</div>
+  <ol class="steps">
+    <li><b>1. Save the image</b>Tap "Download image" below. Squares suit feeds and Marketplace; stories exist for Carly's picks.</li>
+    <li><b>2. Copy the text</b>Each piece has Marketplace/Nextdoor copy and an Instagram caption with hashtags. Edit anything, then post.</li>
+    <li><b>3. Link it</b>The copy already includes the piece's own link, which previews with its photo and price.</li>
+  </ol>
+  <div class="grid" id="grid"></div>
+</div>
+<script src="products.js"></script>
+<script>
+(function(){
+  var S = window.SHOP || {items:[]}, items = (S.items||[]).filter(function(i){ return !i.sold; });
+  var slug = function(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""); };
+  var fmt = function(n){ return n==null ? "Ask" : n===0 ? "Free" : "$" + n; };
+  var base = (S.url || "").replace(/\/?$/, "/"), loc = (S.contact && S.contact.location) || "";
+  var tags = "#handmade #crochet #chunkyknit #shoplocal #coloradomade #" + (loc.split(",")[0] || "").replace(/\s+/g, "").toLowerCase() + " #supportsmallbusiness #handmadegifts";
+  function mp(i){ return i.name + " · " + fmt(i.price) + "\n\n" + (i.description||"") + "\n\nHandmade by Carly. One of a kind. Local pickup in " + loc + ", cash or Venmo.\n\nSee photos and claim it here: " + base + "p/" + slug(i.name) + "/"; }
+  function ig(i){ var hook = i.category === "Art" ? "New original painting for your wall" : i.category === "Blankets" ? "The coziest thing I've made this year" : i.category === "Home & Cats" ? "For the cats (and their people)" : "Fresh off the hook"; return hook + " ✨ " + i.name + " · " + fmt(i.price) + "\n\n" + (i.description||"") + "\n\nOne of each, handmade in Colorado. Local pickup in " + loc + ". Link in bio, or DM me.\n\n" + tags; }
+  var g = document.getElementById("grid"), missing = 0;
+  items.forEach(function(i){
+    var sl = slug(i.name), k = document.createElement("article"); k.className = "k";
+    var img = document.createElement("img"); img.src = "images/social/" + sl + ".jpg"; img.alt = ""; img.loading = "lazy";
+    img.onerror = function(){ img.src = ((i.images && i.images[0]) || i.image || "").replace(/^images\//, "images/thumbs/"); missing++; document.getElementById("note").hidden = false; };
+    k.appendChild(img);
+    var b = document.createElement("div"); b.className = "b";
+    b.innerHTML = '<h2>' + i.name + ' · ' + fmt(i.price) + '</h2>' +
+      '<div class="row"><a class="btn" href="images/social/' + sl + '.jpg" download="' + sl + '.jpg">Download image</a>' + (i.featured ? '<a class="btn ghost" href="images/social/' + sl + '-story.jpg" download="' + sl + '-story.jpg">Story version</a>' : '') + '</div>' +
+      '<div class="row"><button class="btn ghost" data-copy="mp">Copy Marketplace / Nextdoor text</button><button class="btn ghost" data-copy="ig">Copy Instagram caption</button></div>' +
+      '<textarea readonly aria-label="Post text"></textarea>';
+    var ta = b.querySelector("textarea"); ta.value = mp(i);
+    b.addEventListener("click", function(e){ var bt = e.target.closest("[data-copy]"); if (!bt) return; ta.value = bt.dataset.copy === "ig" ? ig(i) : mp(i); navigator.clipboard && navigator.clipboard.writeText(ta.value).then(function(){ toast("Copied. Paste it into your post."); }, function(){ ta.select(); }); });
+    k.appendChild(b); g.appendChild(k);
+  });
+  function toast(m){ var t = document.createElement("div"); t.className = "toast"; t.textContent = m; document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 2200); }
+})();
+</script>
+</body>
+</html>

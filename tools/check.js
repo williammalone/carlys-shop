@@ -6,7 +6,7 @@ const { chromium } = require("playwright");
 (async () => {
   const url = "file://" + path.resolve(__dirname, "..", "index.html");
   let axe = null; try { axe = fs.readFileSync(require.resolve("axe-core/axe.min.js"), "utf8"); } catch (e) {}
-  const browser = await chromium.launch(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}); // PW_CHANNEL=chrome uses the runner's preinstalled Chrome let failed = 0;
+  const browser = await chromium.launch(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}); /* PW_CHANNEL=chrome uses the runner's preinstalled Chrome */ let failed = 0;
   const check = (name, ok, extra) => { console.log((ok ? "  ok   " : "  FAIL ") + name + (extra ? "  " + extra : "")); if (!ok) failed++; };
   for (const [label, vp, scheme] of [["desktop light", { width: 1280, height: 900 }, "light"], ["phone dark", { width: 390, height: 844 }, "dark"]]) {
     console.log(label);

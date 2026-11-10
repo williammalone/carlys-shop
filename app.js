@@ -433,7 +433,11 @@ requestAnimationFrame(function(){ setTimeout(function(){
     } catch (e) {}
   })();
   // offline + instant repeat visits (only on a real host, not when opened from disk)
-  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0 && !/claudeusercontent|claude\.ai/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(function(){});
+  if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0 && !/claudeusercontent|claude\.ai/.test(location.hostname)){
+    var hadController = !!navigator.serviceWorker.controller, reloaded = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function(){ if (hadController && !reloaded){ reloaded = true; location.reload(); } });
+    navigator.serviceWorker.register("sw.js").then(function(reg){ reg.update().catch(function(){}); }).catch(function(){});
+  }
   // admin mode: #admin toggles Mark-sold buttons and a copy of the updated products.js
   var admin = false, soldEdits = {};
   function setAdmin(on){ admin = on; $("admin").hidden = !on; document.body.classList.toggle("is-admin", on); render(); if (on) toast("Admin mode. Mark pieces sold, then copy the updated file."); }

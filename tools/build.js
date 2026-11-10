@@ -77,6 +77,20 @@ if (base) {
   console.log(`injected static shelf (${picks.length} picks), masthead text and preload hint into index.html`);
 }
 
+// 1c. cache busting: hash the site's own files, stamp ?v= on asset links and the service-worker version
+{
+  const crypto = require("crypto");
+  const files = ["styles.css", "app.js", "products.js", "lqip.js", "index.html"].filter(f => fs.existsSync(path.join(root, f)));
+  const hash = crypto.createHash("sha1"); for (const f of files) hash.update(fs.readFileSync(path.join(root, f)));
+  const v = hash.digest("hex").slice(0, 10);
+  let idx = fs.readFileSync(path.join(root, "index.html"), "utf8");
+  idx = idx.replace(/href="styles\.css(\?v=[^"]*)?"/, `href="styles.css?v=${v}"`).replace(/src="(app|products|lqip)\.js(\?v=[^"]*)?"/g, (m, n) => `src="${n}.js?v=${v}"`);
+  fs.writeFileSync(path.join(root, "index.html"), idx);
+  const swPath = path.join(root, "sw.js");
+  fs.writeFileSync(swPath, fs.readFileSync(swPath, "utf8").replace(/const VERSION = "[^"]*";/, `const VERSION = "${v}";`));
+  console.log(`stamped asset version ${v} into index.html and sw.js`);
+}
+
 // 2. blurred placeholders via Pillow (tiny 20px JPEGs as data URIs)
 const pics = [...new Set(items.flatMap(it => (it.images && it.images.length ? it.images : [it.image]).filter(Boolean)))];
 const py = `

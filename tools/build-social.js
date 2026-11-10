@@ -31,7 +31,7 @@ const tpl = (it, story) => {
 };
 (async () => {
   const out = path.join(root, "images/social"); fs.mkdirSync(out, { recursive: true });
-  const browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1080, height: 1080 } });
+  const browser = await chromium.launch(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}); // PW_CHANNEL=chrome uses the runner's preinstalled Chrome const page = await browser.newPage({ viewport: { width: 1080, height: 1080 } });
   let n = 0;
   for (const it of items) {
     const sl = slug(it.name);

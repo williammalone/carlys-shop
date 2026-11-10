@@ -159,10 +159,13 @@ requestAnimationFrame(function(){ setTimeout(function(){
     else if (sort==="name") list.sort(function(a,b){ return a.name.localeCompare(b.name); });
     else list.sort(function(a,b){ return (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i-b._i; });
 
-    lastList = list.slice();
-    renderPicks(cat === "All" && !q);
+    var shelfShown = cat === "All" && !q && !admin && items.filter(function(it){ return it.featured && !it.sold; }).length >= 2;
+    renderPicks(shelfShown);
+    var pickCount = 0;
+    if (shelfShown){ var before = list.length; list = list.filter(function(it){ return !(it.featured && !it.sold); }); pickCount = before - list.length; }
+    lastList = (shelfShown ? items.filter(function(it){ return it.featured && !it.sold; }) : []).concat(list);
     var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
-    $("results").textContent = (list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
+    $("results").textContent = (pickCount ? "The " + pickCount + " picks above, plus " + list.length + " more pieces" : list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
     if (!list.length){
       var allSold = items.length && items.every(function(it){ return it.sold; });

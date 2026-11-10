@@ -7,6 +7,7 @@
 //   description  a sentence or two
 //   image        main photo (relative path). Optional if `images` is set.
 //   images       optional list of photos; the first is the main one, the rest show as thumbnails
+//   featured     true shows a "Carly's pick" badge and lists it first in the default order
 //   sold         true hides it by default and shows a SOLD badge
 //   buy          optional Stripe Payment Link URL; shows a "Buy now" button
 //
@@ -49,6 +50,7 @@ window.SHOP = {
     // --- Chunky knit blankets ---
     {
       name: "Navy chunky knit blanket",
+      featured: true,
       category: "Blankets",
       price: 140,
       condition: "New, handmade",
@@ -87,6 +89,7 @@ window.SHOP = {
     },
     {
       name: "Granny-square hooded scarf",
+      featured: true,
       category: "Wearables",
       price: 55,
       condition: "New, handmade",
@@ -181,6 +184,7 @@ window.SHOP = {
     // --- Paintings and drawings ---
     {
       name: "Rainbow cat, acrylic on canvas",
+      featured: true,
       category: "Art",
       price: 150,
       condition: "Original, ready to hang",

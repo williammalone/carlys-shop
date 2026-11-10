@@ -1,6 +1,6 @@
 # Carly's Handmade Blankets & Art
 
-A single-page, no-build storefront for Carly's handmade blankets, crochet, and paintings. Open `index.html` in a browser, or host the repo root on any static host.
+A single-page, no-build storefront for Carly's handmade blankets, crochet, and paintings. Open `index.html` in a browser, or host the repo root on any static host. Files: `index.html` (markup), `styles.css`, `app.js`, `products.js` (the catalog, the only file you normally edit).
 
 **Live site:** https://williammalone.github.io/carlys-shop/ — deployed by `.github/workflows/pages.yml` on every push to `main`.
 

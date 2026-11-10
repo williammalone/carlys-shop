@@ -58,6 +58,17 @@ The site has no server, so payment works one of three ways. All three are alread
 - Saved view offers "Claim all N", which composes one email listing every saved piece with a total.
 - Re-run: `node tools/check.js` for the smoke test and axe; Lighthouse via `npx lighthouse <url> --form-factor=mobile`.
 
+## UX audit (Nov 10)
+
+Screenshots at phone (390 and 360), tablet (820) and desktop (1366) widths, light and dark, through the full buy flow. Fixed:
+
+- Phone detail sheet: the whole sheet scrolls as one, so the photo scrolls away and the claim form gets the full screen. The sticky bottom bar holds Save, "Claim this piece · $price" and Share, sits last in the flow so nothing is permanently hidden under it, and disappears while the claim form is open.
+- Phone masthead was ~340px tall: the eyebrow now shows only "Handmade · one of each" (the rest is wrapped in `.eb-more`), the piece-count pill is hidden (the All chip carries the count), and Share sits beside the pickup pill.
+- Sort control truncated to "Fe" on phones: the label is visually hidden, the options are shorter ("Lowest price", "Highest price", "Name A–Z"), the select keeps its natural width and the search placeholder shortens under 400px.
+- Phone cards show one button; the photo and the title still open details.
+- Tablet (701–1024px): chips take a full row and the search/sort controls drop beneath them instead of squeezing the chips into a column.
+- Lighthouse mobile after: Performance 92, Accessibility 100, Best Practices 100, SEO 100, layout shift 0.01.
+
 ## Open questions for William
 
 - Prices for each item (none were in Carly's messages).

@@ -45,7 +45,30 @@ requestAnimationFrame(function(){ setTimeout(function(){
   $("soldWrap").hidden = !anySold;
 
   // chips
-  var cat = "All", q = "";
+  var cat = "All", q = "", color = "";
+  var COLORS = [
+    ["Blue", /\b(navy|blue|teal|sky|denim|cobalt|turquoise|aqua)\b/i, "#9fd3f0"],
+    ["Purple", /\b(purple|plum|lavender|lilac|violet|mauve)\b/i, "#cdbdee"],
+    ["Pink", /\b(pink|rose|blush|magenta|fuchsia|coral)\b/i, "#f7b1c9"],
+    ["Green", /\b(green|sage|mint|olive|lime|emerald|forest)\b/i, "#bfe8d3"],
+    ["Yellow", /\b(yellow|gold|mustard|orange|butter|sunflower)\b/i, "#ffe28f"],
+    ["Neutral", /\b(grey|gray|charcoal|black|white|cream|ivory|beige|tan|brown|oatmeal|natural)\b/i, "linear-gradient(135deg,#f6f1ec,#b9b2ad)"],
+    ["Rainbow", /\b(rainbow|multicolou?r|colou?rful)\b/i, "conic-gradient(#f7b1c9,#ffe28f,#bfe8d3,#9fd3f0,#cdbdee,#f7b1c9)"]
+  ];
+  function colorsOf(it){
+    if (it._colors) return it._colors;
+    var out = Array.isArray(it.colors) ? it.colors.slice() : (function(){ var t = it.name + " " + (it.description || ""); return COLORS.filter(function(c){ return c[1].test(t); }).map(function(c){ return c[0]; }); })();
+    return (it._colors = out);
+  }
+  function renderColors(list){
+    var el = $("colors"), counts = {};
+    list.forEach(function(it){ colorsOf(it).forEach(function(k){ counts[k] = (counts[k] || 0) + 1; }); });
+    var show = COLORS.filter(function(c){ return counts[c[0]] >= 2 || c[0] === color; });
+    if (show.length < 2){ el.hidden = true; el.innerHTML = ""; return; }
+    el.hidden = false;
+    el.innerHTML = '<span class="lbl">Color</span>' + show.map(function(c){ return '<button type="button" class="cchip" data-color="' + c[0] + '" aria-pressed="' + (color === c[0]) + '"><i style="--c:' + c[2] + '" aria-hidden="true"></i>' + c[0] + '<small>' + (counts[c[0]] || 0) + '</small></button>'; }).join("");
+    Array.prototype.forEach.call(el.querySelectorAll(".cchip"), function(b){ b.addEventListener("click", function(){ color = color === b.dataset.color ? "" : b.dataset.color; render(); backToGrid(); }); });
+  }
   function catSlug(k){ return k === "All" ? "" : k === "__saved" ? "saved" : k === "__sold" ? "sold" : k === "__under" ? "under-" + (S.giftMax || 50) : slug(k); }
   function catFromSlug(h){ if (h === "saved") return favs.size ? "__saved" : null; if (h === "sold") return anySold ? "__sold" : null; if (h === "under-" + (S.giftMax || 50)) return "__under"; var hit = cats.filter(function(k){ return slug(k) === h; })[0]; return hit || null; }
   var FAVKEY = "carlys-favs";
@@ -75,7 +98,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
     if (under) h += '<button class="chip" aria-pressed="' + (cat==="__under") + '" data-cat="__under">' + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13M12 8c-2-3-6-3-6 0 0 2 3 2 6 0M12 8c2-3 6-3 6 0 0 2-3 2-6 0"/></svg>Under $' + gm + '<small>' + under + '</small></button>';
     if (anySold) h += '<button class="chip" aria-pressed="' + (cat==="__sold") + '" data-cat="__sold">Sold<small>' + items.filter(function(it){ return it.sold; }).length + '</small></button>';
     $("chips").innerHTML = h;
-    Array.prototype.forEach.call($("chips").children, function(ch, k){ ch.style.setProperty("--k", k); });
+    Array.prototype.forEach.call($("chips").children, function(ch, k){ ch.style.setProperty("--k", k); });    var act = $("chips").querySelector('.chip[aria-pressed="true"]'); if (act && act.scrollIntoView && $("chips").scrollWidth > $("chips").clientWidth) act.scrollIntoView({ block: "nearest", inline: "center", behavior: reduce ? "auto" : "smooth" });
   }
   function backToGrid(){ var bar = document.querySelector(".bar"), g = $("grid"); var top = g.getBoundingClientRect().top - bar.getBoundingClientRect().height - 24; if (top < -40) window.scrollBy({ top: top, behavior: reduce ? "auto" : "smooth" }); }
   $("chips").addEventListener("click", function(e){ var b = e.target.closest(".chip"); if(!b) return; cat = b.getAttribute("data-cat"); chips(); render(); backToGrid(); var cs = catSlug(cat); history.replaceState(null, "", location.pathname + location.search + (cs ? "#" + cs : "")); });
@@ -89,6 +112,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
   var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   try { if (localStorage.getItem("carlys-motion") === "off"){ document.documentElement.setAttribute("data-motion", "off"); reduce = true; } } catch (e) {}
   function fadeIn(img){ var show = function(){ img.classList.add("in"); }; img.addEventListener("load", show); img.addEventListener("error", show); if (img.complete && img.naturalWidth) show(); }
+  function celebrate(){ var f = $("claim"), r = f.getBoundingClientRect(); [.25, .5, .75].forEach(function(p, i){ setTimeout(function(){ heartBurst(r.left + r.width * p, Math.min(r.bottom - 40, window.innerHeight - 80)); }, i * 140); }); }
   function heartBurst(x, y){
     if (reduce) return;
     var h = document.createElement("div"); h.className = "heartburst";
@@ -135,7 +159,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
     $("cPay").innerHTML = '<span class="lbl">Paying with</span>' + ACCEPTED.map(function(m, i){ return '<label><input type="radio" name="cpay" value="' + esc(m) + '"' + (i === 0 ? " checked" : "") + '>' + esc(m) + '</label>'; }).join("");
     setTimeout(function(){ $("cName").focus({preventScroll:false}); f.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" }); }, 50);
   }
-  $("claim").addEventListener("submit", function(e){ e.preventDefault(); if (!cur || !hasContact) return; var href = claimHref(cur); window.location.href = href; toast("Opening your " + (c.sms ? "messages" : "email") + " app…"); });
+  $("claim").addEventListener("submit", function(e){ e.preventDefault(); if (!cur || !hasContact) return; var href = claimHref(cur); window.location.href = href; celebrate(); toast("Opening your " + (c.sms ? "messages" : "email") + " app…"); });
   $("cCopy").addEventListener("click", function(){ if (!cur) return; var t = claimText(cur), txt = "To: " + (c.sms || c.email) + "\nSubject: " + t.subject + "\n\n" + t.body; var done = function(){ toast("Request copied. Paste it into any message to " + (c.sms || c.email) + "."); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done, function(){ prompt("Copy this:", txt); }); else prompt("Copy this:", txt); });
   function payLinks(it){
     var out = [], amt = it.price, note = it.name + " (Carly's Handmade)";
@@ -156,24 +180,27 @@ requestAnimationFrame(function(){ setTimeout(function(){
     else if (cat === "__saved") list = list.filter(function(it){ return favs.has(it._slug); });
     else if (cat !== "All") list = list.filter(function(it){ return (it.category||"Other")===cat; });
     list = list.filter(matches);
+    renderColors(list);
+    if (color) list = list.filter(function(it){ return colorsOf(it).indexOf(color) >= 0; });
     if (sort==="price-asc") list.sort(function(a,b){ return pv(a)-pv(b); });
     else if (sort==="price-desc") list.sort(function(a,b){ var x=pv(a),y=pv(b); if(x===Infinity&&y===Infinity)return 0; if(x===Infinity)return 1; if(y===Infinity)return -1; return y-x; });
     else if (sort==="name") list.sort(function(a,b){ return a.name.localeCompare(b.name); });
     else list.sort(function(a,b){ return (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i-b._i; });
 
-    var shelfShown = cat === "All" && !q && !admin && items.filter(function(it){ return it.featured && !it.sold && !it.hold; }).length >= 2;
+    var shelfShown = cat === "All" && !q && !color && !admin && items.filter(function(it){ return it.featured && !it.sold && !it.hold; }).length >= 2;
     renderPicks(shelfShown);
     var pickCount = 0;
     if (shelfShown){ var before = list.length; list = list.filter(function(it){ return !(it.featured && !it.sold && !it.hold); }); pickCount = before - list.length; }
     lastList = (shelfShown ? items.filter(function(it){ return it.featured && !it.sold && !it.hold; }) : []).concat(list);
-    var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
-    $("results").textContent = (pickCount ? "The " + pickCount + " picks above, plus " + list.length + " more pieces" : list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
+    var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><div class="row"><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button><button type="button" class="btn ghost" id="shareList">Share list</button></div>'; $("shareList").addEventListener("click", function(){ shareList(list); }); $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
+    (function(){ var sp = $("savedPill"), fl = items.filter(function(it){ return favs.has(it._slug) && !it.sold; }); if (fl.length && cat !== "__saved"){ var tot = fl.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sp.hidden = false; sp.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-8-5.3-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.7-8 11-8 11z"/></svg>' + fl.length + " saved" + (tot ? " · " + fmt.format(tot) : ""); sp.setAttribute("aria-label", "Show " + fl.length + " saved pieces"); } else sp.hidden = true; })();
+    $("results").textContent = (pickCount ? "The " + pickCount + " picks above, plus " + list.length + " more pieces" : list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (color ? ' · ' + color : '') + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
     if (!list.length){
       var allSold = items.length && items.every(function(it){ return it.sold; });
-      var msg = q ? "No pieces match \"" + esc(q) + "\". Try another word." : cat === "__saved" ? "Nothing saved yet. Tap the heart on a piece to keep it here." : allSold ? "Every piece has found a home. Thank you! Ask about a custom order below." : "Nothing here right now.";
-      grid.innerHTML = '<div class="empty"><svg viewBox="0 0 120 80" aria-hidden="true"><path d="M20 78 L28 46 L48 58 Z M100 78 L92 46 L72 58 Z" fill="var(--lavender)"/><circle cx="60" cy="56" r="30" fill="var(--lavender)"/><path d="M26 44 L30 14 L52 30 Z M94 44 L90 14 L68 30 Z" fill="var(--lavender)"/><path d="M34 40 L36 22 L48 32 Z M86 40 L84 22 L72 32 Z" fill="var(--pink)"/><path d="M46 54 q5 -6 10 0 M64 54 q5 -6 10 0" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60 60 l-4 -4 q4 -3 8 0 z" fill="var(--heart)"/><path d="M60 60 q-4 5 -8 2 M60 60 q4 5 8 2" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="0" y="72" width="120" height="8" rx="4" fill="var(--pink)" opacity=".6"/></svg><p>' + msg + '</p>' + (q || cat !== "All" ? '<button type="button" class="btn ghost" id="clearFilters">Show everything</button>' : "") + '</div>';
-      var cf = $("clearFilters"); if (cf) cf.addEventListener("click", function(){ q = ""; $("q").value = ""; cat = "All"; chips(); render(); history.replaceState(null, "", location.pathname + location.search); });
+      var msg = q ? "No pieces match \"" + esc(q) + "\". Try another word." : color ? "Nothing in " + color.toLowerCase() + " here. Try another color." : cat === "__saved" ? "Nothing saved yet. Tap the heart on a piece to keep it here." : allSold ? "Every piece has found a home. Thank you! Ask about a custom order below." : "Nothing here right now.";
+      grid.innerHTML = '<div class="empty"><svg viewBox="0 0 120 80" aria-hidden="true"><path d="M20 78 L28 46 L48 58 Z M100 78 L92 46 L72 58 Z" fill="var(--lavender)"/><circle cx="60" cy="56" r="30" fill="var(--lavender)"/><path d="M26 44 L30 14 L52 30 Z M94 44 L90 14 L68 30 Z" fill="var(--lavender)"/><path d="M34 40 L36 22 L48 32 Z M86 40 L84 22 L72 32 Z" fill="var(--pink)"/><path d="M46 54 q5 -6 10 0 M64 54 q5 -6 10 0" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M60 60 l-4 -4 q4 -3 8 0 z" fill="var(--heart)"/><path d="M60 60 q-4 5 -8 2 M60 60 q4 5 8 2" stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="0" y="72" width="120" height="8" rx="4" fill="var(--pink)" opacity=".6"/></svg><p>' + msg + '</p>' + (q || color || cat !== "All" ? '<button type="button" class="btn ghost" id="clearFilters">Show everything</button>' : "") + '</div>';
+      var cf = $("clearFilters"); if (cf) cf.addEventListener("click", function(){ q = ""; $("q").value = ""; cat = "All"; color = ""; chips(); render(); history.replaceState(null, "", location.pathname + location.search); });
       if (allSold && S.custom && !q && cat === "All"){ /* keep the custom-orders card reachable */ }
       return;
     }
@@ -398,7 +425,16 @@ requestAnimationFrame(function(){ setTimeout(function(){
   }
   var toastTimer;
   function toast(msg){ var t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 2600); }
-  function openFromHash(){ var h = location.hash.replace(/^#/,""); if (!h) return; var it = items.filter(function(x){ return x._slug === h; })[0]; if (it){ openSheet(it, 0); return; } var k = catFromSlug(h); if (k){ cat = k; chips(); render(); } }
+  function shareList(list){
+    var base = (S.url || (location.origin + location.pathname)).replace(/#.*$/, ""), url = base + "#wish=" + list.map(function(b){ return b._slug; }).join(",");
+    var text = "My wishlist from " + (S.title || "the shop") + ": " + list.map(function(b){ return b.name; }).join(", ");
+    if (navigator.share){ navigator.share({ title: "My wishlist", text: text, url: url }).catch(function(){}); return; }
+    var done = function(){ toast("Wishlist link copied. Send it to someone who loves you."); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function(){ prompt("Copy this link:", url); }); else prompt("Copy this link:", url);
+  }
+  $("savedPill").addEventListener("click", function(){ cat = "__saved"; chips(); render(); history.replaceState(null, "", location.pathname + location.search + "#saved"); backToGrid(); });
+  function openFromHash(){ var h = location.hash.replace(/^#/,""); if (!h) return;
+    if (h.indexOf("wish=") === 0){ var n = 0; h.slice(5).split(",").forEach(function(sl){ if (items.some(function(x){ return x._slug === sl; }) && !favs.has(sl)){ favs.add(sl); n++; } }); saveFavs(); cat = favs.size ? "__saved" : "All"; history.replaceState(null, "", location.pathname + location.search + (favs.size ? "#saved" : "")); chips(); render(); toast(n ? "Wishlist loaded: " + n + " piece" + (n > 1 ? "s" : "") + " added to Saved." : "Wishlist loaded. Everything on it is already in Saved."); return; } var it = items.filter(function(x){ return x._slug === h; })[0]; if (it){ openSheet(it, 0); return; } var k = catFromSlug(h); if (k){ cat = k; chips(); render(); } }
 
   // how it works + footer
   if (!hasContact){ $("step1b").textContent = "Pick a piece"; $("step1").textContent = "Contact details are coming soon. Until then, browse and tap any piece for photos and details."; }

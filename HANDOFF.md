@@ -85,3 +85,11 @@ Screenshots at phone (390 and 360), tablet (820) and desktop (1366) widths, ligh
 - The detail photo shows "1 / 4" when a piece has several photos.
 - Share on a piece attaches the photo when the browser supports sharing files (iOS and Android), falling back to the link.
 
+## Nov 10, later still: shop by color, saved pill, shareable wishlist
+
+- "Color" chips above the grid filter by color words found in each piece's name and description (Blue, Purple, Pink, Green, Yellow, Neutral, Rainbow). An item can set `colors: ["Purple", "Green"]` to override the guess. Only colors with at least two matches are shown.
+- A floating "♥ 2 saved · $270" pill (bottom-left) appears whenever something is saved and you're not already on the Saved view; tapping it opens Saved.
+- Saved view has "Share list": it copies or shares a link like `#wish=slug,slug`. Opening that link adds those pieces to the viewer's Saved and shows the list, so a wishlist can be sent to whoever is buying the gift.
+- Sending a claim request bursts hearts over the form.
+- The chip row scrolls the active chip into view on phones.
+

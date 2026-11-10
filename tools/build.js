@@ -52,7 +52,7 @@ if (base) {
 
 // 1b. static picks shelf + preload hint, so the first paint already has the polaroids
 {
-  const picks = items.filter(it => it.featured && !it.sold).slice(0, 4);
+  const picks = items.filter(it => it.featured && !it.sold && !it.hold).slice(0, 4);
   const rots = [-4, 2.5, -1.5, 3];
   const variant = (src, dir) => src.replace(/^images\//, "images/" + dir + "/");
   const html = picks.map((it, k) => {
@@ -74,6 +74,12 @@ if (base) {
   idx = idx.replace(/<span id="eyebrow">[\s\S]*?<\/span>/, `<span id="eyebrow">${ebHtml(S.eyebrow || "Handmade · one of each")}</span>`);
   idx = idx.replace(/<p class="tag" id="tagline">[\s\S]*?<\/p>/, `<p class="tag" id="tagline">${esc(S.tagline || "")}</p>`);
   idx = idx.replace(/<title>[\s\S]*?<\/title>/, `<title>${esc(t)}</title>`);
+  // static FAQ (and FAQ structured data) so it renders without JS and search engines see it
+  const faq = (S.faq || []).filter(x => x && x.q && x.a);
+  idx = idx.replace(/<!-- faq:start -->[\s\S]*?<!-- faq:end -->/, "<!-- faq:start -->" + faq.map(x => `<details><summary>${esc(x.q)}</summary><p>${esc(x.a)}</p></details>`).join("") + "<!-- faq:end -->");
+  idx = idx.replace(/<section class="faq wrap" id="faq" aria-labelledby="faqTitle"( hidden)?>/, `<section class="faq wrap" id="faq" aria-labelledby="faqTitle"${faq.length ? "" : " hidden"}>`);
+  idx = idx.replace(/<script type="application\/ld\+json" id="faqld">[\s\S]*?<\/script>\n?/, "");
+  if (faq.length) idx = idx.replace("</head>", `<script type="application/ld+json" id="faqld">${JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map(x => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.a } })) }).replace(/</g, "\\u003c")}</script>\n</head>`);
   fs.writeFileSync(path.join(root, "index.html"), idx);
   console.log(`injected static shelf (${picks.length} picks), masthead text and preload hint into index.html`);
 }

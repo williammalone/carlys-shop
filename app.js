@@ -120,14 +120,14 @@ requestAnimationFrame(function(){ setTimeout(function(){
   var ACCEPTED = (PAY.accepted && PAY.accepted.length) ? PAY.accepted : ["Cash", "Venmo"];
   function claimText(it){
     var name = $("cName").value.trim(), when = $("cWhen").value, pay = ($("cPay").querySelector("input:checked") || {}).value || "", note = $("cNote").value.trim();
-    var lines = it._bundle ? ["Hi! I'd like to claim these pieces" + (it.price > 0 ? " (" + priceText(it.price) + " together)" : "") + ":", it.description, ""] : ["Hi! I'd like to claim the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + ".", ""];
+    var lines = it._bundle ? ["Hi! I'd like to claim these pieces" + (it.price > 0 ? " (" + priceText(it.price) + " together)" : "") + ":", it.description, ""] : it.hold ? ["Hi! If the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + " frees up, I'd love to be next in line.", ""] : ["Hi! I'd like to claim the \"" + it.name + "\"" + (it.price > 0 ? " (" + priceText(it.price) + ")" : "") + ".", ""];
     if (name) lines.push("Name: " + name);
     lines.push("Pickup: " + when + (c.location ? " in " + c.location : ""));
     if (pay) lines.push("Paying with: " + pay);
     if ($("cGift").checked) lines.push("It's a gift: yes, please leave the price off");
     if (note) lines.push("", note);
     lines.push("", itemUrl(it));
-    return { subject: (it._bundle ? "Claim: " : "Claim: ") + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
+    return { subject: (it.hold ? "Next in line: " : "Claim: ") + it.name + (it.price > 0 ? " (" + priceText(it.price) + ")" : ""), body: lines.join("\n") };
   }
   function claimHref(it){ var t = claimText(it); if (c.sms) return "sms:" + c.sms + "?&body=" + encodeURIComponent(t.body); return "mailto:" + c.email + "?subject=" + encodeURIComponent(t.subject) + "&body=" + encodeURIComponent(t.body); }
   function showClaim(it){
@@ -161,11 +161,11 @@ requestAnimationFrame(function(){ setTimeout(function(){
     else if (sort==="name") list.sort(function(a,b){ return a.name.localeCompare(b.name); });
     else list.sort(function(a,b){ return (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a._i-b._i; });
 
-    var shelfShown = cat === "All" && !q && !admin && items.filter(function(it){ return it.featured && !it.sold; }).length >= 2;
+    var shelfShown = cat === "All" && !q && !admin && items.filter(function(it){ return it.featured && !it.sold && !it.hold; }).length >= 2;
     renderPicks(shelfShown);
     var pickCount = 0;
-    if (shelfShown){ var before = list.length; list = list.filter(function(it){ return !(it.featured && !it.sold); }); pickCount = before - list.length; }
-    lastList = (shelfShown ? items.filter(function(it){ return it.featured && !it.sold; }) : []).concat(list);
+    if (shelfShown){ var before = list.length; list = list.filter(function(it){ return !(it.featured && !it.sold && !it.hold); }); pickCount = before - list.length; }
+    lastList = (shelfShown ? items.filter(function(it){ return it.featured && !it.sold && !it.hold; }) : []).concat(list);
     var sb = $("savedBar"); if (cat === "__saved" && list.length > 1){ var tot = list.reduce(function(a, b){ return a + (b.price > 0 ? b.price : 0); }, 0); sb.hidden = false; sb.innerHTML = '<span>' + list.length + ' saved pieces' + (tot ? ' · ' + fmt.format(tot) + ' together' : '') + '</span><button type="button" class="btn" id="claimAll">Claim all ' + list.length + '</button>'; $("claimAll").addEventListener("click", function(){ var bundle = { name: list.length + " saved pieces", category: "Saved", price: tot || null, condition: "", description: list.map(function(b){ return "• " + b.name + (b.price > 0 ? " · " + priceText(b.price) : ""); }).join("\n"), _pics: list.map(function(b){ return b._pics[0]; }).filter(Boolean), _slug: "saved", _fit: "cover", _bundle: true, _i: -1 }; openSheet(bundle, 0); showClaim(bundle); }); } else { sb.hidden = true; sb.innerHTML = ""; }
     $("results").textContent = (pickCount ? "The " + pickCount + " picks above, plus " + list.length + " more pieces" : list.length === items.length ? "Showing all " + list.length + " pieces" : "Showing " + list.length + " of " + items.length) + (cat === "__saved" ? " · Saved" : cat === "__sold" ? " · Sold" : cat === "__under" ? " · Under $" + (S.giftMax || 50) : cat !== "All" ? " · " + cat : "") + (q ? ' · "' + q + '"' : "");
     var grid = $("grid"); grid.innerHTML = "";
@@ -189,10 +189,12 @@ requestAnimationFrame(function(){ setTimeout(function(){
       else { frame.innerHTML = '<span class="noimg">Photo coming</span>'; ph.disabled = true; }
       var pt = document.createElement("span"); pt.className = "pt" + (it.price==null ? " ask" : ""); pt.textContent = priceText(it.price); pt.style.setProperty("--i", grid.children.length); ph.appendChild(pt);
       if (it.sold){ var b = document.createElement("span"); b.className="badge"; b.textContent="SOLD"; ph.appendChild(b); }
+      else if (it.hold){ var hb = document.createElement("span"); hb.className="badge hold"; hb.textContent="On hold"; ph.appendChild(hb); card.classList.add("hold"); }
       else if (it.added && (Date.now() - new Date(it.added).getTime()) < 14 * 864e5){ var nb = document.createElement("span"); nb.className = "badge new"; nb.textContent = "New"; ph.appendChild(nb); }
 
       card.appendChild(ph);
-      if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Mark sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk); }
+      if (admin){ var mk = document.createElement("button"); mk.type = "button"; mk.className = "mark"; var cur_sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold; mk.setAttribute("aria-pressed", cur_sold); mk.textContent = cur_sold ? "Sold ✓" : "Sold"; mk.addEventListener("click", function(e){ e.stopPropagation(); soldEdits[it._slug] = !cur_sold; render(); }); ph.appendChild(mk);
+        var hk = document.createElement("button"); hk.type = "button"; hk.className = "mark hold"; var cur_hold = holdEdits.hasOwnProperty(it._slug) ? holdEdits[it._slug] : !!it.hold; hk.setAttribute("aria-pressed", cur_hold); hk.textContent = cur_hold ? "On hold ✓" : "Hold"; hk.addEventListener("click", function(e){ e.stopPropagation(); holdEdits[it._slug] = !cur_hold; render(); }); ph.appendChild(hk); }
       if (it._pics.length > 1 && im && matchMedia("(hover:hover)").matches){
         var peekTimer; card.addEventListener("mouseenter", function(){ peekTimer = setTimeout(function(){ if (shown === 0) swapImg(im, it._pics[1]); }, 450); });
         card.addEventListener("mouseleave", function(){ clearTimeout(peekTimer); if (shown === 0) swapImg(im, it._pics[0]); });
@@ -222,7 +224,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
       var href = contactHref(it), buy = buyHref(it);
       if (it.sold){ var sb = document.createElement("span"); sb.className="btn"; sb.textContent="Sold"; sb.setAttribute("aria-disabled","true"); act.appendChild(sb); }
       else if (buy){ var ba = document.createElement("a"); ba.className="btn buy"; ba.href=buy; ba.target="_blank"; ba.rel="noopener"; ba.textContent="Buy now"; act.appendChild(ba); }
-      else if (href){ var a = document.createElement("button"); a.type="button"; a.className="btn"; a.textContent="I'm interested"; a.addEventListener("click", function(){ openSheet(it, shown); showClaim(it); }); act.appendChild(a); }
+      else if (href){ var a = document.createElement("button"); a.type="button"; a.className="btn"; a.textContent = it.hold ? "Next in line" : "I'm interested"; a.addEventListener("click", function(){ openSheet(it, shown); showClaim(it); }); act.appendChild(a); }
       var det = document.createElement("button"); det.type="button"; det.className="btn ghost"; det.textContent="Details"; det.addEventListener("click", function(){ openSheet(it, shown); }); act.appendChild(det);
       body.appendChild(act);
       card.appendChild(body);
@@ -238,7 +240,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
   }
   var lastList = [];
   function renderPicks(show){
-    var sec = $("picks"), picks = items.filter(function(it){ return it.featured && !it.sold; }).slice(0, 4);
+    var sec = $("picks"), picks = items.filter(function(it){ return it.featured && !it.sold && !it.hold; }).slice(0, 4);
     if (!show || picks.length < 2){ sec.hidden = true; return; }
     sec.hidden = false;
     if (S.picksTitle) $("picksTitle").textContent = S.picksTitle;
@@ -282,17 +284,18 @@ requestAnimationFrame(function(){ setTimeout(function(){
     cur = it; idx = i >= 0 ? i : 0;
     $("shcat").textContent = it.category || "";
     $("shname").textContent = it.name;
-    $("shprice").innerHTML = it.sold ? '<span style="color:var(--sold)">Sold</span>' : (it.price==null ? 'Price on request<small>' + (hasContact ? "Send a message and we'll get right back to you." : "Prices are being finalized.") + '</small>' : esc(priceText(it.price)));
+    $("shprice").innerHTML = (it.sold ? '<span style="color:var(--sold)">Sold</span>' : (it.price==null ? 'Price on request<small>' + (hasContact ? "Send a message and we'll get right back to you." : "Prices are being finalized.") + '</small>' : esc(priceText(it.price)))) + (it.hold && !it.sold ? "<em>On hold</em>" : "");
     $("shdesc").textContent = it.description || "";
     var meta = "";
     if (it.condition) meta += "<dt>Condition</dt><dd>" + esc(it.condition) + "</dd>";
     if (c.location) meta += "<dt>Pickup</dt><dd>" + esc(c.location) + "</dd>";
     if (it._pics.length > 1) meta += "<dt>" + (it._bundle ? "Pieces" : "Photos") + "</dt><dd>" + it._pics.length + "</dd>";
+    var care = it._bundle ? "" : (it.care != null ? it.care : ((S.care || {})[it.category || ""] || "")); if (care) meta += "<dt>Care</dt><dd>" + esc(care) + "</dd>";
     $("shmeta").innerHTML = meta;
     var href = contactHref(it), cta = "";
     var saved = !it._bundle && favs.has(it._slug);
     var buy = buyHref(it), pays = it.sold ? [] : payLinks(it);
-    var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shclaim">Claim this piece</button>' : "") +
+    var tools = '<div class="row">' + (it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shclaim">' + (it.hold ? "Next in line" : "Claim this piece") + '</button>' : "") +
       (buy && href ? '<a class="btn ghost" href="' + esc(href) + '">Ask</a>' : "") +
       (it._bundle ? "" : '<button type="button" class="btn ghost" id="shfav" aria-pressed="' + saved + '">' + (saved ? "♥ Saved" : "♡ Save") + '</button>') +
       '<button type="button" class="btn ghost" id="shshare">Share</button></div>';
@@ -302,10 +305,11 @@ requestAnimationFrame(function(){ setTimeout(function(){
     }
     if (it.sold) cta = tools + '<p class="hint">This one has found a home. Browse the rest, or ' + (hasContact ? '<a href="#" data-custom>ask for a custom piece</a>.' : 'check back for new pieces.') + '</p>';
     else if (buy) cta = tools + '<p class="hint">Secure checkout with card or Apple Pay. ' + (href ? 'Questions? <a href="' + esc(href) + '">Send a message</a>.' : '') + '</p>' + payHtml;
+    else if (href && it.hold) cta = tools + '<p class="hint">Someone has claimed this one and is picking it up. Ask to be next in line and we\'ll tell you first if it frees up.</p>';
     else if (href) cta = tools + '<div class="accepted">We take ' + ACCEPTED.map(function(m){ return "<span>" + esc(m) + "</span>"; }).join("") + ' at pickup</div><p class="hint">Or reach out directly: <code>' + esc(c.sms || c.email) + '</code></p>' + payHtml;
     else cta = tools + '<p class="hint">Contact details are being added. Save it or share it for now.</p>' + payHtml;
     $("shcta").innerHTML = cta;
-    var barMain = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shbarclaim">Claim this piece · ' + esc(priceText(it.price)) + '</button>' : "";
+    var barMain = it.sold ? "" : buy ? '<a class="btn buy" href="' + esc(buy) + '" target="_blank" rel="noopener">Buy now · ' + esc(priceText(it.price)) + '</a>' : href ? '<button type="button" class="btn" id="shbarclaim">' + (it.hold ? "Next in line" : "Claim this piece") + ' · ' + esc(priceText(it.price)) + '</button>' : "";
     var favIco = '<svg viewBox="0 0 24 24" fill="' + (saved ? "currentColor" : "none") + '" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10z"/></svg>';
     var shareIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/></svg>';
     $("shbar").innerHTML = barMain ? (it._bundle ? "" : '<button type="button" class="iconbtn" id="shbarfav" aria-pressed="' + saved + '" aria-label="' + (saved ? "Saved" : "Save") + '">' + favIco + '</button>') + barMain + '<button type="button" class="iconbtn" id="shbarshare" aria-label="Share">' + shareIco + '</button>' : "";
@@ -316,7 +320,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
     var sc = $("shclaim"); if (sc) sc.addEventListener("click", function(){ showClaim(it); });
     var cf = $("claim"); if (cf.dataset.slug !== it._slug){ cf.hidden = true; $("cName").value = ""; $("cNote").value = ""; }
     var sf = $("shfav"); if (sf) sf.addEventListener("click", function(e){ toggleFav(it); heartBurst(e.clientX, e.clientY); });
-    $("shshare").addEventListener("click", function(){ shareItem(it); });
+    $("shshare").addEventListener("click", function(){ shareItem(it); }); prefetchShare(it);
     var rel = it._bundle ? [] : items.filter(function(x){ return x !== it && !x.sold && (x.category||"") === (it.category||"") }).slice(0, 4);
     if (!it._bundle && rel.length < 2) rel = rel.concat(items.filter(function(x){ return x !== it && !x.sold && rel.indexOf(x) < 0; }).slice(0, 4 - rel.length));
     $("shrelated").hidden = !rel.length;
@@ -352,6 +356,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
   function showPic(){
     var img = $("shimg"); if (sheet.open) swapImg(img, cur._pics[idx] || ""); else { img.removeAttribute("srcset"); img.src = full(cur._pics[idx] || ""); } img.alt = cur.name + (cur._pics.length > 1 ? ", photo " + (idx+1) + " of " + cur._pics.length : "");
     Array.prototype.forEach.call($("shthumbs").children, function(b,k){ if (k===idx) b.setAttribute("aria-current","true"); else b.removeAttribute("aria-current"); });
+    var sc = $("shcount"); sc.hidden = cur._pics.length < 2; sc.textContent = (idx + 1) + " / " + cur._pics.length;
   }
   function step(n){ if(!cur) return; idx = (idx + n + cur._pics.length) % cur._pics.length; showPic(); }
   $("shprev").addEventListener("click", function(){ step(-1); });
@@ -373,9 +378,20 @@ requestAnimationFrame(function(){ setTimeout(function(){
   $("shimg").addEventListener("touchstart", function(e){ sx = e.touches[0].clientX; }, {passive:true});
   $("shimg").addEventListener("touchend", function(e){ if (sx==null) return; var dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 40) step(dx < 0 ? 1 : -1); sx = null; }, {passive:true});
   function itemUrl(it){ var base = (S.url || (location.origin + location.pathname)).replace(/#.*$/, ""); if (S.url && !it._bundle) return base.replace(/\/?$/, "/") + "p/" + it._slug + "/"; return base + "#" + it._slug; }
+  var shareFiles = {};
+  function prefetchShare(it){
+    if (!navigator.canShare || !window.File || it._bundle || !it._pics[0] || shareFiles[it._slug]) return;
+    var src = thumb(it._pics[0]) || it._pics[0];
+    fetch(src).then(function(r){ return r.blob(); }).then(function(b){ var f = new File([b], it._slug + ".jpg", { type: b.type || "image/jpeg" }); if (navigator.canShare({ files: [f] })) shareFiles[it._slug] = f; }).catch(function(){});
+  }
   function shareItem(it){
-    var url = itemUrl(it), title = it.name + " · " + (S.title || "");
-    if (navigator.share){ navigator.share({ title: title, text: it.name + (it.price != null ? " · " + priceText(it.price) : ""), url: url }).catch(function(){}); return; }
+    var url = itemUrl(it), title = it.name + " · " + (S.title || ""), text = it.name + (it.price != null ? " · " + priceText(it.price) : "");
+    if (navigator.share){
+      var data = { title: title, text: text, url: url }, f = shareFiles[it._slug];
+      if (f) data.files = [f];
+      navigator.share(data).catch(function(e){ if (f && e && e.name !== "AbortError") navigator.share({ title: title, text: text, url: url }).catch(function(){}); });
+      return;
+    }
     var done = function(){ toast("Link copied. Send it to someone who'd love this."); };
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, function(){ prompt("Copy this link:", url); });
     else prompt("Copy this link:", url);
@@ -393,6 +409,7 @@ requestAnimationFrame(function(){ setTimeout(function(){
   if (c.email) cl.push('email <code>' + esc(c.email) + '</code>');
   $("contactline").innerHTML = cl.length ? "Prefer to reach out directly? " + cl.join(" or ") + "." : "";
   if (S.payment) $("paytext").textContent = S.payment;
+  (function(){ var f = (S.faq || []).filter(function(x){ return x && x.q && x.a; }); $("faq").hidden = !f.length; if (f.length) $("faqList").innerHTML = f.map(function(x){ return "<details><summary>" + esc(x.q) + "</summary><p>" + esc(x.a) + "</p></details>"; }).join(""); })();
   if (items.some(function(it){ return it.buy; })) { $("step1b").textContent = "Tap \"Buy now\""; $("step1").textContent = "Secure checkout with card or Apple Pay. One of each, so it's yours the moment you pay."; document.querySelector(".steps li:nth-child(2) b").textContent = "We'll be in touch"; document.querySelector(".steps li:nth-child(2) span").textContent = "You'll get a receipt by email and we'll arrange pickup" + (c.location ? " in " + c.location : "") + "."; }
   $("footer").innerHTML = esc(S.footer || "Made with") + ' <span class="heart" aria-label="love">&#9829;</span> ' + esc("by Carly") + (c.location ? " in " + esc(c.location) : "") + ".";
 
@@ -451,8 +468,8 @@ requestAnimationFrame(function(){ setTimeout(function(){
     navigator.serviceWorker.register("sw.js").then(function(reg){ reg.update().catch(function(){}); }).catch(function(){});
   }
   // admin mode: #admin toggles Mark-sold buttons and a copy of the updated products.js
-  var admin = false, soldEdits = {};
-  function setAdmin(on){ admin = on; $("admin").hidden = !on; document.body.classList.toggle("is-admin", on); render(); if (on) toast("Admin mode. Mark pieces sold, then copy the updated file."); }
+  var admin = false, soldEdits = {}, holdEdits = {};
+  function setAdmin(on){ admin = on; $("admin").hidden = !on; document.body.classList.toggle("is-admin", on); render(); if (on) toast("Admin mode. Tap Hold or Sold on a card, then copy the updated file."); }
   if (location.hash === "#admin"){ history.replaceState(null, "", location.pathname + location.search); setAdmin(true); }
   var tapCount = 0, tapTimer; document.querySelector(".brand .logo").addEventListener("click", function(){ tapCount++; clearTimeout(tapTimer); tapTimer = setTimeout(function(){ tapCount = 0; }, 1500); if (tapCount >= 5){ tapCount = 0; setAdmin(!admin); } });
   $("adminOff").addEventListener("click", function(){ setAdmin(false); });
@@ -463,8 +480,15 @@ requestAnimationFrame(function(){ setTimeout(function(){
         var sold = soldEdits.hasOwnProperty(it._slug) ? soldEdits[it._slug] : !!it.sold;
         var re = new RegExp('(name: "' + it.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '",[\\s\\S]*?sold: )(true|false)');
         out = out.replace(re, function(m, a, b){ if ((b === "true") !== sold) n++; return a + (sold ? "true" : "false"); });
+        if (holdEdits.hasOwnProperty(it._slug) && holdEdits[it._slug] !== !!it.hold){
+          var hold = holdEdits[it._slug], nm = it.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          var reH = new RegExp('(name: "' + nm + '",[\\s\\S]*?hold: )(true|false)'), reS = new RegExp('(name: "' + nm + '",[\\s\\S]*?)(\\n(\\s*)sold: )');
+          if (reH.test(out)) out = out.replace(reH, function(m, a){ return a + (hold ? "true" : "false"); });
+          else out = out.replace(reS, function(m, a, b, ws){ return a + "\n" + ws + "hold: " + (hold ? "true" : "false") + "," + b; });
+          n++;
+        }
       });
-      var done = function(){ toast(n ? "Copied with " + n + " change" + (n > 1 ? "s" : "") + ". Paste over products.js on GitHub and commit." : "Copied. No changes yet, tap Mark sold on a card first."); };
+      var done = function(){ toast(n ? "Copied with " + n + " change" + (n > 1 ? "s" : "") + ". Paste over products.js on GitHub and commit." : "Copied. No changes yet, tap Hold or Sold on a card first."); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(out).then(done, function(){ prompt("Copy this:", out); }); else prompt("Copy this:", out);
     }).catch(function(){ toast("Couldn't read products.js from this host."); });
   });

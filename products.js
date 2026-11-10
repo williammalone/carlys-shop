@@ -11,6 +11,8 @@
 //   featured     true puts it on the "Carly's picks" shelf above the grid and lists it first
 //   pickNote     optional short handwritten line under the caption on the shelf
 //   sold         true hides it by default and shows a SOLD badge
+//   hold         true means someone has claimed it but not picked up yet: shows "On hold" and lets others ask to be next in line
+//   care         optional care note shown in the detail view (defaults to the category note in `care` below; "" hides it)
 //   buy          optional Stripe Payment Link URL; shows a "Buy now" button
 //
 // Prices were set Nov 8, 2026 from current Etsy/market asking prices for comparable handmade work,
@@ -21,6 +23,22 @@ window.SHOP = {
   eyebrow: "Handmade · one of each · ready for holiday gifting",
   payment: "Cash or Venmo at pickup.",
   giftMax: 50,                       // the "Under $50" chip threshold
+  // Care notes shown in each piece's detail view, by category. Edit freely; an item can set its own `care`.
+  care: {
+    "Blankets": "Spot clean, or wash on a gentle cold cycle and lay flat to dry. No heat.",
+    "Wearables": "Hand wash cold and lay flat to dry. Reshape while damp.",
+    "Home & Cats": "Crochet pieces wash cold on gentle and air dry.",
+    "Art": "Keep out of direct sun and away from damp.",
+    "Cards": "Blank inside, with an envelope."
+  },
+  // Questions buyers ask most. Shown under "How buying works". Remove any you don't want.
+  faq: [
+    { q: "Do you ship?", a: "Pickup in Erie, CO is the default. Ask when you claim a piece and we'll see what shipping would cost for your address." },
+    { q: "Can I see it in person first?", a: "Yes. Say so in your message and we'll set up a time. No pressure to buy." },
+    { q: "What does \"On hold\" mean?", a: "Someone has claimed it and is picking it up. You can ask to be next in line in case it frees up." },
+    { q: "Can you make one in different colors or a different size?", a: "Usually, yes. Use \"Request a custom piece\" and tell us colors, size and when you need it. We reply with a price and timing." },
+    { q: "Is it a gift?", a: "Tick \"It's a gift\" when you claim a piece and we'll leave the price off and wrap it up." }
+  ],
   url: "https://williammalone.github.io/carlys-shop/",   // used for share links and previews
   // Payments. Fill any of these and "Pay $X with ..." buttons appear in each item's detail view,
   // prefilled with the price and item name. Leave empty to hide.
@@ -184,6 +202,7 @@ window.SHOP = {
       condition: "Like new",
       description: "Set of four ceramic cat measuring cups (1/4 to 1 cup) with black knit tail sleeves on the handles.",
       image: "images/cat-measuring-cups.jpg",
+      care: "",
       sold: false
     },
 

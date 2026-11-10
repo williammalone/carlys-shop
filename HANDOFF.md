@@ -76,3 +76,12 @@ Screenshots at phone (390 and 360), tablet (820) and desktop (1366) widths, ligh
 - Pickup only, or shipping too? Footer says "Cash or Venmo at pickup. First come, first served."
 - Should the seven `extra-` photos be deleted?
 - Is this a one-time sale, or will Carly add items over time? (If ongoing, the pop-up cards entry is already "made to order".)
+
+## Nov 10, later: hold status, care notes, FAQ, photo counter, share with photo
+
+- `hold: true` on an item shows an "On hold" badge, swaps the claim button for "Next in line" (the email asks to be told if it frees up), keeps it off the picks shelf. Admin mode has a "Hold" button beside "Sold" on each card; "Copy updated products.js" writes both.
+- `care` map at the top of products.js gives a per-category care line in the detail view; an item can set its own `care`, and `care: ""` hides it.
+- `faq` list renders a "Good to know" section under How buying works (static HTML plus FAQ structured data at build, so it works without JS).
+- The detail photo shows "1 / 4" when a piece has several photos.
+- Share on a piece attaches the photo when the browser supports sharing files (iOS and Android), falling back to the link.
+
